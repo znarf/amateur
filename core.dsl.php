@@ -2,25 +2,20 @@
 
 function core_dir($value = null)
 {
-  static $core_dir = null;
+  static $core_dir;
   return $value ? $core_dir = $value : __DIR__;
 }
 
-function core_load($name, $classname = null, $filename = null)
+function core_load($name)
 {
-  if (empty($classname)) {
-    $classname = ucfirst($name);
+  $class = core_dir() . '/' . $name . '.class.php';
+  if (file_exists($class)) {
+   include $class;
   }
-  if (!class_exists($classname)) {
-    if (empty($filename)) {
-      $filename = core_dir() . '/' . $name . '.class.php';
-    }
-    require $filename;
+  $dsl = core_dir() . '/' . $name . '.dsl.php';
+  if (file_exists($dsl)) {
+    include $dsl;
   }
-  if (class_exists($classname)) {
-    $GLOBALS[$name] = new $classname();
-  }
-  include core_dir() . '/' . $name . '.dsl.php';
 }
 
 function replaceable_call($callable, $args)
@@ -28,7 +23,7 @@ function replaceable_call($callable, $args)
   if (is_array($callable) || count($args) > 5) {
     return call_user_func_array($callable, $args);
   }
-  switch (count($args)) { 
+  switch (count($args)) {
     case 0: return $callable();
     case 1: return $callable($args[0]);
     case 2: return $callable($args[0], $args[1]);

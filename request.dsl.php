@@ -7,7 +7,7 @@ replaceable('request_method', function() {
 });
 
 replaceable('request_url', function() {
-  return $_SERVER['REQUEST_URI'];
+  return strtok($_SERVER['REQUEST_URI'], '?');
 });
 
 replaceable('request_host', function() {

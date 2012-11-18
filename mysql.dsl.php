@@ -180,7 +180,7 @@ function db_fetch_assoc($result)
 
 function db_fetch_object($result, $classname = 'Ressource')
 {
-  if ($attributes = $result->fetch_assoc()) {
+  if ($result && $attributes = $result->fetch_assoc()) {
     return new $classname($attributes);
   }
   return false;

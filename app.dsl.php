@@ -1,23 +1,78 @@
 <?php
 
-function app_dir($dir = null) { return $GLOBALS['app']->dir($dir); }
+function app_dir($value = null)
+{
+  static $app_dir;
+  return isset($value) ? $app_dir = realpath($value) : $app_dir;
+}
 
-function lib() { return $GLOBALS['app']->lib(func_get_args()); }
+function lib()
+{
+  foreach (func_get_args() as $name) {
+    include_once app_dir() . '/lib/' . $name . '.lib.php';
+  }
+}
 
-function model() { return $GLOBALS['app']->model(func_get_args()); }
+/* Model */
 
-function helper() { return $GLOBALS['app']->helper(func_get_args()); }
+function model()
+{
+  foreach (func_get_args() as $name) {
+    include_once app_dir() . '/models/' . $name . '.model.php';
+  }
+}
 
-function module($name) { return $GLOBALS['app']->module($name); }
+/* Controller */
 
-function action($name, $params = array()) { return $GLOBALS['app']->action($name, $params); }
+function module($name, $callable = null)
+{
+  static $modules = array();
+  if ($callable) return $modules[$name] = $callable;
+  if (array_key_exists($name, $modules)) return $modules[$name]();
+  return include app_dir() . '/modules/' . $name . '.module.php';
+}
 
-function start($dir = null) { return $GLOBALS['app']->start($dir); }
+function action($name, $params = array())
+{
+  extract($params);
+  include app_dir() . '/actions/' . $name . '.action.php';
+}
 
-function text($text = '') { return $GLOBALS['app']->text($text); }
+function helper()
+{
+  foreach (func_get_args() as $name) {
+    include_once app_dir() . '/helpers/' . $name . '.helper.php';
+  }
+}
 
-function view($name, $params = array()) { return $GLOBALS['app']->view($name, $params); }
+/* Views */
 
-function layout($name, $content = '') { return $GLOBALS['app']->layout($name, $content); }
+function view($name, $params = array())
+{
+  extract($params);
+  ob_start();
+  include app_dir() . '/views/' . $name . '.view.php';
+  return ob_get_clean();
+}
 
-function render($name, $params = array()) { return $GLOBALS['app']->render($name, $params); }
+function layout($name, $content = '')
+{
+  include app_dir() . '/layouts/' . $name . '.layout.php';
+}
+
+function render($name, $params = array())
+{
+  layout('default', view($name, $params));
+}
+
+function text($text = '')
+{
+  echo htmlspecialchars($text);
+}
+
+/* Start */
+
+function start($dir = null)
+{
+  include app_dir($dir) . '/app.start.php';
+}

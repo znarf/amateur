@@ -1,28 +1,45 @@
 <?php
 
-function url() { return $GLOBALS['url']->get(); }
+/* Functions */
 
-function url_is($string) { return $GLOBALS['url']->is($string); }
+function url($value = null)
+{
+  static $url;
+  if ($value) $url = $value;
+  return $url ? $url : $url = request_url();
+}
 
-function url_start_with($string) { return $GLOBALS['url']->start_with($string); }
+function base_path($value = null)
+{
+  static $base_path;
+  if ($value) {
+    $base_path = $value;
+    url(str_replace($value, '', url()));
+  }
+  return $base_path ? $base_path : '';
+}
 
-function url_match($route, &$matches) { return $GLOBALS['url']->match($route, $matches); }
+function url_match($route, &$matches)
+{
+  $route = "^$route$";
+  $route = str_replace('/', '\/', $route);
+  $route = str_replace('*', '([^\/]+)', $route);
+  return preg_match("/$route/", url(), $matches);
+}
 
-function base_path($value = null) { return $GLOBALS['url']->base_path($value); }
+/* Helpers */
 
-// function host() { return $_SERVER['HTTP_HOST']; }
+function url_is($str)
+{
+  return $str == url();
+}
 
-function base_url() { return 'http://' . host() . base_path(); }
+function url_start_with($str)
+{
+  return strpos(url(), $str) === 0;
+}
 
-// replaceable('host', array('Core\Request', 'host'));
-
-// function host($arg = null)
-// {
-//   static $func = null;
-//   if (is_callable($arg)) {
-//     $func = $arg;
-//     return $func;
-//   }
-//   if ($func) return call_user_func_array($func, func_get_args());
-//   return $_SERVER['HTTP_HOST'];
-// }
+function base_url()
+{
+  return 'http://' . request_host() . base_path();
+}
