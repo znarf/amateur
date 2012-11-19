@@ -6,16 +6,23 @@ function core_dir($value = null)
   return $value ? $core_dir = $value : __DIR__;
 }
 
-function core_load($name)
+function core_lib()
 {
-  $class = core_dir() . '/' . $name . '.class.php';
-  if (file_exists($class)) {
-   include $class;
+  foreach (func_get_args() as $name) {
+    $class = core_dir() . '/' . $name . '.class.php';
+    if (file_exists($class)) {
+      include_once $class;
+    }
+    $dsl = core_dir() . '/' . $name . '.dsl.php';
+    if (file_exists($dsl)) {
+      include_once $dsl;
+    }
   }
-  $dsl = core_dir() . '/' . $name . '.dsl.php';
-  if (file_exists($dsl)) {
-    include $dsl;
-  }
+}
+
+function core_load()
+{
+  core_lib('app', 'url', 'request');
 }
 
 function replaceable_call($callable, $args)
