@@ -6,11 +6,19 @@ function app_dir($value = null)
   return isset($value) ? $app_dir = realpath($value) : $app_dir;
 }
 
-function lib()
+function app_lib($args)
 {
-  foreach (func_get_args() as $name) {
-    include_once app_dir() . '/lib/' . $name . '.lib.php';
+  $libs = is_array($args) ? $args : func_get_args();
+  foreach ($libs as $lib) {
+    include_once app_dir() . '/lib/' . $lib . '.lib.php';
   }
+}
+
+function lib($args)
+{
+  $libs = is_array($args) ? $args : func_get_args();
+  core_lib($libs);
+  app_lib($libs);
 }
 
 /* Model */

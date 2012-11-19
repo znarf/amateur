@@ -6,14 +6,15 @@ function core_dir($value = null)
   return $value ? $core_dir = $value : __DIR__;
 }
 
-function core_lib()
+function core_lib($args)
 {
-  foreach (func_get_args() as $name) {
-    $class = core_dir() . '/' . $name . '.class.php';
+  $libs = is_array($args) ? $args : func_get_args();
+  foreach ($libs as $lib) {
+    $class = core_dir() . '/' . $lib . '.class.php';
     if (file_exists($class)) {
       include_once $class;
     }
-    $dsl = core_dir() . '/' . $name . '.dsl.php';
+    $dsl = core_dir() . '/' . $lib . '.dsl.php';
     if (file_exists($dsl)) {
       include_once $dsl;
     }
