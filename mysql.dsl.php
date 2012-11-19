@@ -2,14 +2,14 @@
 
 function db_params($params = null)
 {
-  static $db_params = null;
-  return isset($params) ? $db_params = $params : $db_params;
+  static $db_params;
+  return $params ? $db_params = $params : $db_params;
 }
 
 function db_connection()
 {
-  static $connection = null;
-  if (!isset($connection)) {
+  static $connection;
+  if (!$connection) {
       $db = db_params();
       $connection = new mysqli($db['host'], $db['username'], $db['password'], $db['name']);
       if ($connection->connect_error) {
@@ -127,63 +127,12 @@ function db_insert_id()
 function db_get_one($tablename, $where = array(), $fields = array())
 {
   $fields = empty($fields) ? '*' : implode(', ', $fields);
-  // some trouble with named fields in the development stage
-  // so let's disable it for this deployment
-  $fields = '*';
   $query  = "SELECT $fields FROM $tablename";
   $query .= ' WHERE ' . (is_array($where) ? db_build_where($where) : $where);
   $result = db_query($query);
-  if ($result && $row = db_fetch_assoc($result)) {
+  if ($result && $row = $result->fetch_assoc()) {
     return $row;
   }
-}
-
-/*
-function db_fetch_ids($result, $field = 'id', $type = 'int')
-{
-  $ids = array();
-
-  if (is_object($result)) {
-    // mysqli + mysql native driver
-    if (method_exists($result, 'fetch_all')) {
-      foreach ($result->fetch_all(MYSQLI_ASSOC) as $row) {
-        $ids[] = $type == 'int' ? (int)$row[$field] : $row[$field];
-      }
-    } else {
-      $ids = array();
-      while ($row = $result->fetch_assoc()) {
-        $ids[] = $type == 'int' ? (int)$row[$field] : $row[$field];
-      }
-    }
-  }
-
-  return $ids;
-}
-
-function db_query_ids($query, $field = 'id', $type = 'int')
-{
-  $result = db_query($query);
-  return db_fetch_ids($result, $field, $type);
-}
-
-function db_query_count($query)
-{
-  $result = db_query($query);
-  return $result && $row = db_fetch_assoc($result) ? (int)$row['count'] : 0;
-}
-*/
-
-function db_fetch_assoc($result)
-{
-  return $result->fetch_assoc();
-}
-
-function db_fetch_object($result, $classname = 'Ressource')
-{
-  if ($result && $attributes = $result->fetch_assoc()) {
-    return new $classname($attributes);
-  }
-  return false;
 }
 
 function db_fetch_objects($result, $classname = 'Ressource')
