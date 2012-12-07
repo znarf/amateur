@@ -1,29 +1,17 @@
 <?php
 
-function core_dir($value = null)
+defined('core_dir') || define('core_dir', __DIR__);
+
+function core_require($filename)
 {
-  static $core_dir;
-  return $value ? $core_dir = $value : __DIR__;
+  $filename = realpath($filename);
+  return include $filename;
 }
 
-function core_lib($args)
+function core_object($filename)
 {
-  $libs = is_array($args) ? $args : func_get_args();
-  foreach ($libs as $lib) {
-    $class = core_dir() . '/' . $lib . '.class.php';
-    if (file_exists($class)) {
-      include_once $class;
-    }
-    $dsl = core_dir() . '/' . $lib . '.dsl.php';
-    if (file_exists($dsl)) {
-      include_once $dsl;
-    }
-  }
-}
-
-function core_load()
-{
-  core_lib('app', 'url', 'request');
+  $result = core_require($filename);
+  return is_callable($result) ? $result() : $result;
 }
 
 function replaceable_call($callable, $args)

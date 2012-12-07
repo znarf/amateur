@@ -1,52 +1,33 @@
 <?php
 
-/* Replaceables */
+function request_host($value = null) { return request::host($value); }
 
-replaceable('request_method', function() {
-  return $_SERVER['REQUEST_METHOD'];
-});
+function request_method($value = null) { return request::method($value); }
 
-replaceable('request_url', function() {
-  return strtok($_SERVER['REQUEST_URI'], '?');
-});
+function request_header($value = null) { return request::header($value); }
 
-replaceable('request_host', function() {
-  return $_SERVER['HTTP_HOST'];
-});
+function has_param($name) { return request::param($name) ? true : false; }
 
-replaceable('request_param', function($name, $value = null) {
-  if ($value !== null) return $_REQUEST[$name] = $value;
-  if (isset($_REQUEST[$name])) return $_REQUEST[$name];
-});
+function get_param($name, $default = null) { $value = request::param($name); return $value ? $value : $default; }
 
-replaceable('request_header', function($name) {
-  static $headers = array();
-  if (array_key_exists($name, $headers)) {
-    return $headers[$name];
-  } else {
-    $key = 'HTTP_' . str_replace('-', '_', strtoupper($name));
-    return $headers[$name] = isset($_SERVER[$key]) ? $_SERVER[$key] : null;
-  }
-});
+function get_int($name, $default = null) { return (int)get_param($name, $default); }
 
-/* Helpers */
+function set_param($name, $value) { return request::param($name, $value); }
 
-function host($value = null) { return request_host($value); }
+function is_get() { return request::method() == 'GET'; }
 
-function has_param() { return request_param($name) ? true : false; }
+function is_post() { return request::method() == 'POST'; }
 
-function get_param($name, $default = null) { $value = request_param($name); return $value ? $value : $default; }
+function is_patch() { return request::method() == 'PATCH'; }
 
-function set_param($name, $value) { return request_param($name, $value); }
+function is_put() { return reques::method() == 'PUT'; }
 
-function is_get() { return request_method() == 'GET'; }
+function is_delete() { return request::method() == 'DELETE'; }
 
-function is_post() { return request_method() == 'POST'; }
+function is_write() { return in_array(request::method(), array('POST', 'PATCH', 'PUT', 'DELETE')); }
 
-function is_patch() { return request_method() == 'PATCH'; }
+function url_match($route) { return request::url_match($route); }
 
-function is_put() { return request_method() == 'PUT'; }
+function url_is($str) { return request::url_is($str); }
 
-function is_delete() { return request_method() == 'DELETE'; }
-
-function is_write() { return in_array(request_method(), array('POST', 'PATCH', 'PUT', 'DELETE')); }
+function url_start_with($str) { return request::url_start_with($str); }
