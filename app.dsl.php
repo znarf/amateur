@@ -30,6 +30,10 @@ replaceable('helper', function($args) use($app) {
   return $app->helper($helpers);
 });
 
+replaceable('action', function($name, $params = []) use($app) {
+  return $app->action($name, $params);
+});
+
 replaceable('view', function($name, $params = []) use($app) {
   return $app->view($name, $params);
 });
