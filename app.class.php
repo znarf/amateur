@@ -21,17 +21,17 @@ class app
 
   function request()
   {
-    return isset($this->request) ? $this->request : $this->request = core_object(CORE_DIR . '/request.php');
+    return isset($this->request) ? $this->request : $this->request = core_object(core_dir . '/request.php');
   }
 
   public $response;
 
   function response()
   {
-    return isset($this->response) ? $this->response : $this->response = core_object(CORE_DIR . '/response.php');
+    return isset($this->response) ? $this->response : $this->response = core_object(core_dir . '/response.php');
   }
 
-  public $modules = array();
+  public $modules = [];
 
   function module($name, $callable = null)
   {
@@ -42,21 +42,26 @@ class app
       $fn = include $this->dir() . '/modules/' . $name . '.module.php';
       if (!is_callable($fn)) return $fn;
       $this->modules[$name] = $fn;
-    } 
+    }
     return $fn();
   }
 
-  public $models = array();
+  public $models = [];
 
   function model($name)
   {
-    if (array_key_exists($name, $this->models)) {
-      $class = $this->models[$name];
-    } else {
-      $fn = include_once $this->dir() . '/models/' . $name . '.model.php';
-      $class = $this->models[$name] = $fn();
+    if (is_array($name)) {
+      $_models = [];
+      foreach ($name as $_name) $_models[] = self::model($_name);
+      return $_models;
     }
-    return $class;
+    if (array_key_exists($name, $this->models)) {
+      return $this->models[$name];
+    } else {
+      include_once $this->dir() . '/models/' . $name . '.model.php';
+      $classname = ucfirst($name);
+      return $this->models[$name] = new $classname();
+    }
   }
 
   function helper($args)
@@ -68,13 +73,13 @@ class app
     return true;
   }
 
-  function action($name, $params = array())
+  function action($name, $params = [])
   {
     extract($params);
     include $this->dir() . '/actions/' . $name . '.action.php';
   }
 
-  public $views = array();
+  public $views = [];
 
   function view($name, $args = null)
   {

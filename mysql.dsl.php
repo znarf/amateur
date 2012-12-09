@@ -59,7 +59,7 @@ function db_now($format = 'Y-m-d H:i:s')
   return date($format);
 }
 
-function db_insert($tablename, $set = array())
+function db_insert($tablename, $set = [])
 {
   $query = "INSERT INTO $tablename";
   $query .= ' SET ' . self::buildSet($set);
@@ -70,7 +70,7 @@ function db_insert($tablename, $set = array())
   return true;
 }
 
-function db_update($tablename, $set = array(), $where = array())
+function db_update($tablename, $set = [], $where = [])
 {
   $query  = "UPDATE $tablename";
   $query .= ' SET ' . db_build_set($set);
@@ -82,7 +82,7 @@ function db_update($tablename, $set = array(), $where = array())
   return true;
 }
 
-function db_delete($tablename, $where = array())
+function db_delete($tablename, $where = [])
 {
   $query  = "DELETE FROM $tablename";
   $query .= ' WHERE ' . (is_array($where) ? db_build_where($where) : $where);
@@ -93,9 +93,9 @@ function db_delete($tablename, $where = array())
   return true;
 }
 
-function db_build_where($where = array())
+function db_build_where($where = [])
 {
-  $_where = array();
+  $_where = [];
   foreach ($where as $key => $value) {
     $value = db_quote($value);
     if (is_array($value)) {
@@ -109,9 +109,9 @@ function db_build_where($where = array())
   return implode(' AND ', $_where);
 }
 
-function db_build_set($set = array())
+function db_build_set($set = [])
 {
-  $_set = array();
+  $_set = [];
   foreach ($set as $key => $value) {
     $_set[] = $key . ' = ' . db_quote($value);
   }
@@ -124,7 +124,7 @@ function db_insert_id()
   return $connection->insert_id;
 }
 
-function db_get_one($tablename, $where = array(), $fields = array())
+function db_get_one($tablename, $where = [], $fields = [])
 {
   $fields = empty($fields) ? '*' : implode(', ', $fields);
   $query  = "SELECT $fields FROM $tablename";
@@ -137,14 +137,12 @@ function db_get_one($tablename, $where = array(), $fields = array())
 
 function db_fetch_objects($result, $classname = 'Ressource')
 {
-  $objects = array();
-  while ($attributes = $result->fetch_assoc()) {
-    $objects[] = new $classname($attributes);
-  }
+  $objects = [];
+  while ($attributes = $result->fetch_assoc()) $objects[] = new $classname($attributes);
   return $objects;
 }
 
-function db_search($tablename, $params = array())
+function db_search($tablename, $params = [])
 {
   extract($params);
 

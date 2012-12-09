@@ -34,7 +34,7 @@ class request
     if (isset($_REQUEST[$name])) return $_REQUEST[$name];
   }
 
-  static $headers = array();
+  static $headers = [];
 
   static function header($name)
   {

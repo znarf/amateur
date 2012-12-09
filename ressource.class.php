@@ -5,7 +5,7 @@ class Ressource
 
   protected $_attributes;
 
-  function __construct($attributes = array())
+  function __construct($attributes = [])
   {
     $this->_attributes = $attributes;
     $methods = get_class_methods($this);

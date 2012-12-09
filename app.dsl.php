@@ -29,3 +29,11 @@ replaceable('helper', function($args) use($app) {
   $helpers = is_array($args) ? $args : func_get_args();
   return $app->helper($helpers);
 });
+
+replaceable('view', function($name, $params = []) use($app) {
+  return $app->view($name, $params);
+});
+
+replaceable('render', function($name, $params = []) use($app) {
+  return $app->layout('default', $app->view($name, $params));
+});

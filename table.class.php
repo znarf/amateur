@@ -12,18 +12,18 @@ class Table
   static function get($id)
   {
     if (static::$primary) {
-      return static::get_one(array(static::$primary => $id));
+      return static::get_one([static::$primary => $id]);
     }
   }
 
-  static function get_one($params = array())
+  static function get_one($params = [])
   {
     if ($row = db_get_one(static::$tablename, $params)) {
       return new static::$classname($row);
     }
   }
 
-  static function create($values = array())
+  static function create($values = [])
   {
     $result = db_insert(static::$tablename, $values);
     if (static::$primary && $id = db_insert_id()) {

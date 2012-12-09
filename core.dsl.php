@@ -32,7 +32,7 @@ function replaceable_call($callable, $args)
 function replaceable($name, $replaceable)
 {
   global $replaceables;
-  isset($replaceables) || $replaceables = array();
+  isset($replaceables) || $replaceables = [];
   if (empty($replaceables[$name])) eval(
     'function ' . $name . '() {
       global $replaceables;

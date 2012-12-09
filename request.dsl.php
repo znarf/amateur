@@ -12,6 +12,8 @@ function get_param($name, $default = null) { $value = request::param($name); ret
 
 function get_int($name, $default = null) { return (int)get_param($name, $default); }
 
+function get_bool($name, $default = null) { return (bool)get_param($name, $default); }
+
 function set_param($name, $value) { return request::param($name, $value); }
 
 function is_get() { return request::method() == 'GET'; }
@@ -20,11 +22,13 @@ function is_post() { return request::method() == 'POST'; }
 
 function is_patch() { return request::method() == 'PATCH'; }
 
-function is_put() { return reques::method() == 'PUT'; }
+function is_put() { return request::method() == 'PUT'; }
 
 function is_delete() { return request::method() == 'DELETE'; }
 
-function is_write() { return in_array(request::method(), array('POST', 'PATCH', 'PUT', 'DELETE')); }
+function is_write() { return in_array(request::method(), ['POST', 'PATCH', 'PUT', 'DELETE']); }
+
+function url($value = null) { return request::url($value); }
 
 function url_match($route) { return request::url_match($route); }
 

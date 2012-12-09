@@ -12,6 +12,6 @@ function set_header($name, $value)
 
 function redirect($path)
 {
-  $url = base_path() . $path;
+  $url = app_path() . $path;
   set_header("Location", $url);
 }
