@@ -10,7 +10,7 @@ $GLOBALS['app'] = $app = new app();
 
 /* DSL */
 
-require_once __DIR__ . '/app.dsl.php';
+require __DIR__ . '/app.dsl.php';
 
 /* Return */
 

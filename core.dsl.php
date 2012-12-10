@@ -14,6 +14,7 @@ function core_object($filename)
   return is_callable($result) ? $result() : $result;
 }
 
+/*
 function replaceable_call($callable, $args)
 {
   if (is_array($callable) || count($args) > 5) {
@@ -28,6 +29,7 @@ function replaceable_call($callable, $args)
     case 5: return $callable($args[0], $args[1], $args[2], $args[3], $args[4]);
   }
 }
+*/
 
 function replaceable($name, $replaceable)
 {
@@ -37,7 +39,7 @@ function replaceable($name, $replaceable)
     'function ' . $name . '() {
       global $replaceables;
       if (is_callable($replaceables["' . $name . '"]))
-      return replaceable_call($replaceables["' . $name . '"], func_get_args());
+      return call_user_func_array($replaceables["' . $name . '"], func_get_args());
       throw new Exception("Unknown replaceable (' . $name . ')");
     }');
   $replaceables[$name] = $replaceable;

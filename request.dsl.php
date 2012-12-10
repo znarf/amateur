@@ -1,37 +1,47 @@
 <?php
 
-function request_host($value = null) { return request::host($value); }
+if (empty($request)) {
+  require_once __DIR__ . '/request.class.php';
+  $GLOBALS['request'] = $request = new request();
+}
 
-function request_method($value = null) { return request::method($value); }
+foreach (['host', 'method', 'header'] as $method) {
+  replaceable("request_$method", [$request, $method]);
+}
 
-function request_header($value = null) { return request::header($value); }
+foreach (['url', 'url_match', 'url_is', 'url_start_with'] as $method) {
+  replaceable($method, [$request, $method]);
+}
 
-function has_param($name) { return request::param($name) ? true : false; }
+foreach (['get', 'post', 'patch', 'put', 'delete'] as $method) {
+  replaceable("is_$method", function() use($request) {
+    $request->method() == strtoupper($method);
+  });
+}
 
-function get_param($name, $default = null) { $value = request::param($name); return $value ? $value : $default; }
+replaceable("is_write", function() use($request) {
+  return in_array($request->method(), ['POST', 'PATCH', 'PUT', 'DELETE']);
+});
 
-function get_int($name, $default = null) { return (int)get_param($name, $default); }
+replaceable("has_param", function($name) use($request) {
+  return $request->param($name) ? true : false;
+});
 
-function get_bool($name, $default = null) { return (bool)get_param($name, $default); }
+replaceable("set_param", function($name, $value) use($request) {
+  return $request->param($name, $value);
+});
 
-function set_param($name, $value) { return request::param($name, $value); }
+replaceable("get_param", function($name, $default = null) use($request) {
+  $value = $request->param($name);
+  return $value ? $value : $default;
+});
 
-function is_get() { return request::method() == 'GET'; }
+replaceable("get_int", function($name, $default = null) use($request) {
+  $value = $request->param($name);
+  return $value ? (int)$value : $default;
+});
 
-function is_post() { return request::method() == 'POST'; }
-
-function is_patch() { return request::method() == 'PATCH'; }
-
-function is_put() { return request::method() == 'PUT'; }
-
-function is_delete() { return request::method() == 'DELETE'; }
-
-function is_write() { return in_array(request::method(), ['POST', 'PATCH', 'PUT', 'DELETE']); }
-
-function url($value = null) { return request::url($value); }
-
-function url_match($route) { return request::url_match($route); }
-
-function url_is($str) { return request::url_is($str); }
-
-function url_start_with($str) { return request::url_start_with($str); }
+replaceable("get_bool", function($name, $default = null) use($request) {
+  $value = $request->param($name);
+  return $value ? (bool)$value : $default;
+});

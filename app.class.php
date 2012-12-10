@@ -39,11 +39,14 @@ class app
     if (array_key_exists($name, $this->modules)) {
       $fn = $this->modules[$name];
     } else {
+      $app = $this;
       $fn = include $this->dir() . '/modules/' . $name . '.module.php';
       if (!is_callable($fn)) return $fn;
       $this->modules[$name] = $fn;
     }
-    return $fn();
+    $req = $this->request();
+    $res = $this->response();
+    return $fn($req, $res);
   }
 
   public $models = [];

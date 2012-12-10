@@ -10,7 +10,7 @@ $GLOBALS['request'] = $request = new request();
 
 /* DSL */
 
-require_once __DIR__ . '/request.dsl.php';
+require __DIR__ . '/request.dsl.php';
 
 /* Return */
 
