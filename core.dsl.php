@@ -2,6 +2,8 @@
 
 defined('core_dir') || define('core_dir', __DIR__);
 
+class HttpException extends Exception {}
+
 function core_require($filename)
 {
   $filename = realpath($filename);
@@ -12,6 +14,11 @@ function core_object($filename)
 {
   $result = core_require($filename);
   return is_callable($result) ? $result() : $result;
+}
+
+function http_exception($code, $status)
+{
+  throw new HttpException($status, $code);
 }
 
 /*
