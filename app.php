@@ -6,7 +6,7 @@ require_once __DIR__ . '/app.class.php';
 
 /* Instanciate */
 
-$GLOBALS['app'] = $app = new app();
+$GLOBALS['app'] = $app = new \Core\App();
 
 /* DSL */
 

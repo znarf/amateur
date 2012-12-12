@@ -1,6 +1,8 @@
 <?php
 
-class app
+namespace Core;
+
+class App
 {
 
   public $dir;
@@ -36,16 +38,16 @@ class app
   function module($name, $callable = null)
   {
     if ($callable) return $this->modules[$name] = $callable;
+    $app = $this;
+    $req = $this->request();
+    $res = $this->response();
     if (array_key_exists($name, $this->modules)) {
       $fn = $this->modules[$name];
     } else {
-      $app = $this;
       $fn = include $this->dir() . '/modules/' . $name . '.module.php';
       if (!is_callable($fn)) return $fn;
       $this->modules[$name] = $fn;
     }
-    $req = $this->request();
-    $res = $this->response();
     return $fn($req, $res);
   }
 
@@ -71,7 +73,7 @@ class app
   {
     $helpers = is_array($args) ? $args : func_get_args();
     foreach ($helpers as $name) {
-      include_once app_dir() . '/helpers/' . $name . '.helper.php';
+      include_once $this->dir() . '/helpers/' . $name . '.helper.php';
     }
     return true;
   }
@@ -114,7 +116,7 @@ class app
     try {
       $start = include $this->dir($dir) . '/app.start.php';
       if (is_callable($start)) $start($req, $res);
-    } catch (Exception $e) {
+    } catch (\Exception $e) {
       $res->exception($e);
     }
   }

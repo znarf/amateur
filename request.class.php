@@ -1,6 +1,8 @@
 <?php
 
-class request
+namespace Core;
+
+class Request
 {
 
   static $url;

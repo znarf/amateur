@@ -1,6 +1,8 @@
 <?php
 
-class response
+namespace Core;
+
+class Response
 {
 
   static function exception($e)

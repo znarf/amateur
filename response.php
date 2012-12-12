@@ -6,7 +6,7 @@ require_once __DIR__ . '/response.class.php';
 
 /* Instanciate */
 
-$GLOBALS['response'] = $response = new response();
+$GLOBALS['response'] = $response = new \Core\Response();
 
 /* DSL */
 
