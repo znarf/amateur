@@ -1,17 +1,15 @@
 <?php
 
-function status($code, $message)
-{
-  header("HTTP/1.1 $code $message");
+if (empty($response)) {
+  require_once __DIR__ . '/response.class.php';
+  $GLOBALS['response'] = $response = new \Core\Response();
 }
 
-function set_header($name, $value)
-{
-  header("$name:$value");
+foreach (['status', 'set_header'] as $method) {
+  replaceable($method, [$response, $method]);
 }
 
-function redirect($path)
-{
+replaceable('redirect', function($path) use($response) {
   $url = app_path() . $path;
-  set_header("Location", $url);
-}
+  $response->set_header("Location", $url);
+});
