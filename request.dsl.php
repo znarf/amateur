@@ -13,6 +13,10 @@ foreach (['url', 'url_match', 'url_is', 'url_start_with'] as $method) {
   replaceable($method, [$request, $method]);
 }
 
+replaceable('check_method', [$request, 'check_method']);
+
+/* Methods */
+
 foreach (['get', 'post', 'patch', 'put', 'delete'] as $method) {
   replaceable("is_$method", function() use($request) {
     $request->method() == strtoupper($method);
@@ -22,6 +26,8 @@ foreach (['get', 'post', 'patch', 'put', 'delete'] as $method) {
 replaceable("is_write", function() use($request) {
   return in_array($request->method(), ['POST', 'PATCH', 'PUT', 'DELETE']);
 });
+
+/* Params */
 
 replaceable("has_param", function($name) use($request) {
   return $request->param($name) ? true : false;
@@ -45,3 +51,5 @@ replaceable("get_bool", function($name, $default = null) use($request) {
   $value = $request->param($name);
   return $value ? (bool)$value : $default;
 });
+
+replaceable('check_parameters', [$request, 'check_parameters']);

@@ -48,6 +48,8 @@ class Request
     }
   }
 
+  /* Url */
+
   static function url_is($str)
   {
     return $str == self::url();
@@ -65,6 +67,24 @@ class Request
     $route = str_replace('*', '([^\/]+)', $route);
     $result = preg_match("/$route/", self::url(), $matches);
     return $result ? $matches : false;
+  }
+
+  static function check_method($methods)
+  {
+    $methods = is_string($methods) ? explode(",", strtoupper($methods)) : $methods;
+    if (!in_array(self::method(), $methods)) {
+      throw new HttpException('Method Not Allowed', '405');
+    }
+  }
+
+  static function check_parameters($parameters)
+  {
+    $parameters = is_string($parameters) ? explode(",", $parameters) : $parameters;
+    foreach ($parameters as $name) {
+      if (!self::param($name)) {
+        throw new HttpException("Missing Parameter ($name)", '400');
+      }
+    }
   }
 
 }
