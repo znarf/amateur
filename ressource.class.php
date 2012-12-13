@@ -1,5 +1,7 @@
 <?php
 
+namespace Core;
+
 class Ressource
 {
 
@@ -9,8 +11,10 @@ class Ressource
   {
     $this->_attributes = $attributes;
     $methods = get_class_methods($this);
+    $mkeys = array_flip($methods);
     foreach ($this->_attributes as $key => $value) {
-      if (!in_array($key, $methods)) {
+      // if (!in_array($key, $methods)) {
+      if (!isset($mkeys[$key])) {
         $this->$key = $value;
       }
     }
@@ -29,9 +33,7 @@ class Ressource
 
   function attribute($name)
   {
-    if (isset($this->_attributes[$name])) {
-      return $this->_attributes[$name];
-    }
+    if (isset($this->_attributes[$name])) return $this->_attributes[$name];
   }
 
 }

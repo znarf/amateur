@@ -1,5 +1,7 @@
 <?php
 
+namespace Core;
+
 class Table
 {
 
@@ -9,17 +11,31 @@ class Table
 
   static $tablename;
 
+  static $unique_indexes = [];
+
   static function get($id)
   {
     if (static::$primary) {
-      return static::get_one([static::$primary => $id]);
+      return static::get_one(static::$primary, $id);
     }
   }
 
-  static function get_one($params = [])
+  static function get_one($key, $value)
   {
-    if ($row = db_get_one(static::$tablename, $params)) {
-      return new static::$classname($row);
+    // From Cache
+    $use_cache = in_array($key, static::$unique_indexes);
+    $cache_key = static::$tablename . "_single_" . $key . "_" . $value;
+    if ($use_cache && $ressource = cache_get($cache_key)) {
+      return $ressource;
+    }
+    // From DB
+    if ($row = db_get_one(static::$tablename, [$key => $value])) {
+      $ressource = new static::$classname($row);
+      // Set Cache
+      if ($use_cache) {
+        cache_set($cache_key, $ressource);
+      }
+      return $ressource;
     }
   }
 

@@ -135,11 +135,18 @@ function db_get_one($tablename, $where = [], $fields = [])
   }
 }
 
-function db_fetch_objects($result, $classname = 'Ressource')
+function db_fetch_objects($result, $classname = '\Core\Ressource')
 {
   $objects = [];
   while ($attributes = $result->fetch_assoc()) $objects[] = new $classname($attributes);
   return $objects;
+}
+
+function db_fetch_all($result)
+{
+  $rows = [];
+  while ($row = $result->fetch_assoc()) $rows[] = $row;
+  return $rows;
 }
 
 function db_search($tablename, $params = [])
