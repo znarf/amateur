@@ -9,6 +9,10 @@ foreach (['dir', 'path', 'start'] as $method) {
   replaceable("app_$method", [$app, $method]);
 }
 
-foreach (['start', 'model', 'module', 'helper', 'action', 'view'] as $method) {
+foreach (['start', 'model', 'module', 'helper', 'action', 'view', 'layout'] as $method) {
   replaceable($method, [$app, $method]);
 }
+
+replaceable('render', function($name, $params = []) use($app) {
+  return $app->layout('default', $app->view($name, $params));
+});
