@@ -97,7 +97,7 @@ class App
     // Include view
     } else {
       if (is_array($args)) extract($args);
-      include $this->dir() . '/views/' . $name . '.view.php';
+      include $this->dir() . '/' . $name . '.view.php';
     }
     // Return
     return ob_get_clean();
@@ -105,7 +105,7 @@ class App
 
   function layout($name, $content = '')
   {
-    include $this->dir() . '/layouts/' . $name . '.layout.php';
+    include $this->dir() . '/' . $name . '.layout.php';
   }
 
   function start($dir = null)
