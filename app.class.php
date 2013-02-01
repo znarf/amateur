@@ -84,6 +84,12 @@ class App
     include $this->dir() . '/actions/' . $name . '.action.php';
   }
 
+  function partial($name, $params = [])
+  {
+    extract($params);
+    include $this->dir() . '/' . $name . '.partial.php';
+  }
+
   public $views = [];
 
   function view($name, $args = null)
