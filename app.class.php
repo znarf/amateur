@@ -87,7 +87,7 @@ class App
   function partial($name, $params = [])
   {
     extract($params);
-    include $this->dir() . '/' . $name . '.partial.php';
+    include $this->dir() . '/partials/' . $name . '.partial.php';
   }
 
   public $views = [];
@@ -103,7 +103,7 @@ class App
     // Include view
     } else {
       if (is_array($args)) extract($args);
-      include $this->dir() . '/' . $name . '.view.php';
+      include $this->dir() . '/views/' . $name . '.view.php';
     }
     // Return
     return ob_get_clean();
@@ -111,7 +111,7 @@ class App
 
   function layout($name, $content = '')
   {
-    include $this->dir() . '/' . $name . '.layout.php';
+    include $this->dir() . '/layouts/' . $name . '.layout.php';
   }
 
   function start($dir = null)
