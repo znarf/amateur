@@ -123,8 +123,20 @@ class App
       $start = include $this->dir($dir) . '/app.start.php';
       if (is_callable($start)) $start($req, $res);
     } catch (\Exception $e) {
-      $res->exception($e);
+      self::exception($e, $req, $res);
     }
+  }
+
+  function exception($exception, $req, $res)
+  {
+    $code = $exception->getCode();
+    $code = $code >= 100 & $code < 599 ? $code : 500;
+    $message = $exception->getMessage();
+    $res->status($code, $message);
+    self::layout(
+      "<h2>$code - $message</h2>" .
+      "<pre>" . $exception->getTraceAsString() . "</pre>"
+    );
   }
 
 }

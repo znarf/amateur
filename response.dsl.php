@@ -5,7 +5,7 @@ if (empty($response)) {
   $GLOBALS['response'] = $response = new \Core\Response();
 }
 
-foreach (['status', 'set_header'] as $method) {
+foreach (['status', 'set_header', 'ok'] as $method) {
   replaceable($method, [$response, $method]);
 }
 
