@@ -109,7 +109,7 @@ class App
     return ob_get_clean();
   }
 
-  function layout($name, $content = '')
+  function layout($content = '', $name = 'default')
   {
     include $this->dir() . '/layouts/' . $name . '.layout.php';
   }

@@ -12,7 +12,3 @@ foreach (['dir', 'path', 'start'] as $method) {
 foreach (['start', 'model', 'module', 'helper', 'action', 'view', 'layout', 'partial'] as $method) {
   replaceable($method, [$app, $method]);
 }
-
-replaceable('render', function($name, $params = []) use($app) {
-  return $app->layout('default', $app->view($name, $params));
-});
