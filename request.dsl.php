@@ -13,19 +13,20 @@ foreach (['url', 'url_match', 'url_is', 'url_start_with'] as $method) {
   replaceable($method, [$request, $method]);
 }
 
-replaceable('check_method', [$request, 'check_method']);
 
 /* Methods */
 
 foreach (['get', 'post', 'patch', 'put', 'delete'] as $method) {
-  replaceable("is_$method", function() use($request) {
-    $request->method() == strtoupper($method);
+  replaceable("is_$method", function() use($request, $method) {
+    return $request->method() == strtoupper($method);
   });
 }
 
 replaceable("is_write", function() use($request) {
   return in_array($request->method(), ['POST', 'PATCH', 'PUT', 'DELETE']);
 });
+
+replaceable('check_method', [$request, 'check_method']);
 
 /* Params */
 
