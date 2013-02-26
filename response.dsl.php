@@ -12,4 +12,5 @@ foreach (['status', 'set_header', 'ok'] as $method) {
 replaceable('redirect', function($path) use($response) {
   $url = app_path() . $path;
   $response->set_header("Location", $url);
+  exit;
 });
