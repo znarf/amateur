@@ -69,13 +69,20 @@ class App
     }
   }
 
-  function helper($args)
+  public $helpers = [];
+
+  function helper($name)
   {
-    $helpers = is_array($args) ? $args : func_get_args();
-    foreach ($helpers as $name) {
-      include_once $this->dir() . '/helpers/' . $name . '.helper.php';
+    if (is_array($name)) {
+      $_helpers = [];
+      foreach ($name as $_name) $_helpers[] = self::helper($_name);
+      return $_helpers;
     }
-    return true;
+    if (array_key_exists($name, $this->helpers)) {
+      return $this->helpers[$name];
+    }
+    $result = include $this->dir() . '/helpers/' . $name . '.helper.php';
+    return $this->helpers[$name] = is_object($result) ? $result : null;
   }
 
   function action($name, $params = [])
