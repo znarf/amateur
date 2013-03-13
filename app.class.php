@@ -99,7 +99,7 @@ class App
 
   public $views = [];
 
-  function view($name, $args = null)
+  function view($name, $args = [])
   {
     if (is_callable($args)) return $this->views[$name] = $args;
     // Start Template
@@ -107,13 +107,17 @@ class App
     // Function view
     if (array_key_exists($name, $this->views)) {
       $this->views[$name]($args);
-    // Include view
-    } else {
-      if (is_array($args)) extract($args);
-      include $this->dir() . '/views/' . $name . '.view.php';
+      return ob_get_clean();
     }
-    // Return
-    return ob_get_clean();
+    // Include view
+    $filename = $this->dir() . '/views/' . $name . '.view.php';
+    if (file_exists($filename)) {
+      extract($args);
+      include $filename;
+      return ob_get_clean();
+    }
+    // No View Found
+    return false;
   }
 
   function layout($content = '', $name = 'default')
@@ -129,9 +133,23 @@ class App
     try {
       $start = include $this->dir($dir) . '/app.start.php';
       if (is_callable($start)) $start($req, $res);
+    } catch (\HttpException $e) {
+      self::error($e->getCode(), $e->getMessage());
     } catch (\Exception $e) {
       self::exception($e, $req, $res);
     }
+  }
+
+  function error($code, $message)
+  {
+    $res = $this->response();
+    $res->status($code, $message);
+    // Try error views
+    foreach ([$code, 'error'] as $view) {
+      if ($result = self::view($view)) return self::layout($result);
+    }
+    // Default View
+    self::layout("<h2>$code - $message</h2>");
   }
 
   function exception($exception, $req, $res)
