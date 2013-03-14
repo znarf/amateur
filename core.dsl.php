@@ -16,9 +16,9 @@ function core_object($filename)
   return is_callable($result) ? $result() : $result;
 }
 
-function http_exception($code, $status)
+function http_error($code, $message)
 {
-  throw new HttpException($status, $code);
+  return new HttpException($message, $code);
 }
 
 /*

@@ -5,9 +5,9 @@ namespace Core;
 class Response
 {
 
-  static function status($code, $message)
+  static function status($code)
   {
-    header("HTTP/1.1 $code $message");
+    http_response_code($code);
   }
 
   static function ok($content)

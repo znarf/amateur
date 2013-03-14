@@ -101,7 +101,10 @@ class App
 
   function view($name, $args = [])
   {
-    if (is_callable($args)) return $this->views[$name] = $args;
+    // Set view
+    if (is_callable($args)) {
+      return $this->views[$name] = $args;
+    }
     // Start Template
     ob_start();
     // Function view
@@ -116,8 +119,6 @@ class App
       include $filename;
       return ob_get_clean();
     }
-    // No View Found
-    return false;
   }
 
   function layout($content = '', $name = 'default')
@@ -134,34 +135,20 @@ class App
       $start = include $this->dir($dir) . '/app.start.php';
       if (is_callable($start)) $start($req, $res);
     } catch (\HttpException $e) {
-      self::error($e->getCode(), $e->getMessage());
+      self::error($e->getCode(), $e->getMessage(), $e->getTraceAsString());
     } catch (\Exception $e) {
-      self::exception($e, $req, $res);
+      self::error(500, $e->getMessage(), $e->getTraceAsString());
     }
   }
 
-  function error($code, $message)
+  function error($code = 500, $message = 'Application Error', $trace = '')
   {
-    $res = $this->response();
-    $res->status($code, $message);
+    $this->response()->status($code);
     // Try error views
     foreach ([$code, 'error'] as $view) {
-      if ($result = self::view($view)) return self::layout($result);
+      if ($result = self::view($view, compact('code', 'message', 'trace'))) break;
     }
-    // Default View
-    self::layout("<h2>$code - $message</h2>");
-  }
-
-  function exception($exception, $req, $res)
-  {
-    $code = $exception->getCode();
-    $code = $code >= 100 & $code < 599 ? $code : 500;
-    $message = $exception->getMessage();
-    $res->status($code, $message);
-    self::layout(
-      "<h2>$code - $message</h2>" .
-      "<pre>" . $exception->getTraceAsString() . "</pre>"
-    );
+    self::layout( isset($result) ? $result : "<h2>{$code} {$message}</h2>" . "<pre>{$trace}</pre>" );
   }
 
 }
