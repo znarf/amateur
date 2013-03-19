@@ -62,35 +62,23 @@ function db_now($format = 'Y-m-d H:i:s')
 function db_insert($tablename, $set = [])
 {
   $query = "INSERT INTO $tablename";
-  $query .= ' SET ' . self::buildSet($set);
-  $result = self::query($query);
-  if (!$result) {
-    throw new Exception(self::$con->error);
-  }
-  return true;
+  $query .= ' SET ' . db_build_set($set);
+  return db_query($query);
 }
 
 function db_update($tablename, $set = [], $where = [])
 {
   $query  = "UPDATE $tablename";
   $query .= ' SET ' . db_build_set($set);
-  $query .= ' WHERE ' . (is_array($where) ? self::buildWhere($where) : $where);
-  $result = db_query($query);
-  if (!$result) {
-    throw new Exception(self::$con->error);
-  }
-  return true;
+  $query .= ' WHERE ' . (is_array($where) ? db_build_where($where) : $where);
+  return db_query($query);
 }
 
 function db_delete($tablename, $where = [])
 {
   $query  = "DELETE FROM $tablename";
   $query .= ' WHERE ' . (is_array($where) ? db_build_where($where) : $where);
-  $result = db_query($query);
-  if (!$result) {
-    throw new Exception(self::$con->error);
-  }
-  return true;
+  return db_query($query);
 }
 
 function db_build_where($where = [])
