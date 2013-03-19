@@ -13,6 +13,6 @@ foreach (['start', 'model', 'module', 'helper', 'action', 'view', 'layout', 'par
   replaceable($method, [$app, $method]);
 }
 
-replaceable('render', function($name, $args = null) use ($app) {
+replaceable('render', function($name, $args = []) use ($app) {
   $app->layout($app->view($name, $args));
 });
