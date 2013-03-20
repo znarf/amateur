@@ -16,7 +16,7 @@ function cache_delete($key)
   if ($connection = cache_connection()) return $connection->delete($key);
 }
 
-function cache_set($key, $var, $flag = null, $expire = 0)
+function cache_set($key, $var, $expire = 0)
 {
-  if ($connection = cache_connection()) return $connection->set($key, $var, $flag, $expire);
+  if ($connection = cache_connection()) return $connection->set($key, $var, false, $expire);
 }
