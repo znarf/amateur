@@ -24,7 +24,7 @@ class Table
   {
     // From Cache
     $use_cache = in_array($key, static::$unique_indexes);
-    $cache_key = static::$tablename . "_single_" . $key . "_" . $value;
+    $cache_key = static::$tablename . "_one_" . $key . "_" . $value;
     if ($use_cache && $ressource = cache_get($cache_key)) {
       return $ressource;
     }
