@@ -57,7 +57,7 @@ class App
   {
     if (is_array($name)) {
       $_models = [];
-      foreach ($name as $_name) $_models[] = self::model($_name);
+      foreach ($name as $_name) $_models[] = $this->model($_name);
       return $_models;
     }
     if (array_key_exists($name, $this->models)) {
@@ -75,7 +75,7 @@ class App
   {
     if (is_array($name)) {
       $_helpers = [];
-      foreach ($name as $_name) $_helpers[] = self::helper($_name);
+      foreach ($name as $_name) $_helpers[] = $this->helper($_name);
       return $_helpers;
     }
     if (array_key_exists($name, $this->helpers)) {
@@ -135,9 +135,9 @@ class App
       $start = include $this->dir($dir) . '/app.start.php';
       if (is_callable($start)) $start($req, $res);
     } catch (\HttpException $e) {
-      self::error($e->getCode(), $e->getMessage(), $e->getTraceAsString());
+      $this->error($e->getCode(), $e->getMessage(), $e->getTraceAsString());
     } catch (\Exception $e) {
-      self::error(500, $e->getMessage(), $e->getTraceAsString());
+      $this->error(500, $e->getMessage(), $e->getTraceAsString());
     }
   }
 
@@ -146,9 +146,9 @@ class App
     $this->response()->status($code);
     // Try error views
     foreach ([$code, 'error'] as $view) {
-      if ($result = self::view($view, compact('code', 'message', 'trace'))) break;
+      if ($result = $this->view($view, compact('code', 'message', 'trace'))) break;
     }
-    self::layout( isset($result) ? $result : "<h2>{$code} {$message}</h2>" . "<pre>{$trace}</pre>" );
+    $this->layout( isset($result) ? $result : "<h2>{$code} {$message}</h2>" . "<pre>{$trace}</pre>" );
   }
 
 }
