@@ -13,7 +13,6 @@ foreach (['url', 'url_match', 'url_is', 'url_start_with'] as $method) {
   replaceable($method, [$request, $method]);
 }
 
-
 /* Methods */
 
 foreach (['get', 'post', 'patch', 'put', 'delete'] as $method) {

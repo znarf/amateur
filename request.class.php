@@ -73,7 +73,7 @@ class Request
   {
     $methods = is_string($methods) ? explode(",", strtoupper($methods)) : $methods;
     if (!in_array(self::method(), $methods)) {
-      throw new HttpException('Method Not Allowed', '405');
+      throw http_error(405, 'Method Not Allowed');
     }
   }
 
@@ -82,7 +82,7 @@ class Request
     $parameters = is_string($parameters) ? explode(",", $parameters) : $parameters;
     foreach ($parameters as $name) {
       if (!self::param($name)) {
-        throw new HttpException("Missing Parameter ($name)", '400');
+        throw http_error(400, "Missing Parameter ($name)");
       }
     }
   }
