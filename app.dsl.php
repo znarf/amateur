@@ -2,7 +2,7 @@
 
 if (empty($app)) {
   require_once __DIR__ . '/app.class.php';
-  $GLOBALS['app'] = $app = new \Core\App();
+  $GLOBALS['app'] = $app = new \Core\App;
 }
 
 foreach (['dir', 'path', 'start'] as $method) {

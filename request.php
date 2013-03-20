@@ -6,7 +6,7 @@ require_once __DIR__ . '/request.class.php';
 
 /* Instanciate */
 
-$GLOBALS['request'] = $request = new \Core\Request();
+$GLOBALS['request'] = $request = new \Core\Request;
 
 /* DSL */
 

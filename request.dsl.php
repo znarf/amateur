@@ -2,7 +2,7 @@
 
 if (empty($request)) {
   require_once __DIR__ . '/request.class.php';
-  $GLOBALS['request'] = $request = new request();
+  $GLOBALS['request'] = $request = new \Core\Request;
 }
 
 foreach (['host', 'method', 'header'] as $method) {
