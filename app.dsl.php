@@ -29,6 +29,10 @@ replaceable('absolute_url', function($path = '') use($app) {
   return 'http://' . $app->request()->host() . $app->path() . $path;
 });
 
+replaceable('static_url', function($path = '') use($app) {
+  return '//' . $app->request()->host() . $app->path() . $path;
+});
+
 replaceable('current_url', function() use($app) {
   return 'http://' . $app->request()->host() . $app->path() . $app->url();
 });
