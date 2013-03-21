@@ -130,11 +130,23 @@ function db_fetch_objects($result, $classname = '\Core\Ressource')
   return $objects;
 }
 
+function db_fetch_ids($result, $key = 'id')
+{
+  $ids = [];
+  while ($row = $result->fetch_assoc()) $ids[] = (int)$row[$key];
+  return $ids;
+}
+
 function db_fetch_all($result)
 {
   $rows = [];
   while ($row = $result->fetch_assoc()) $rows[] = $row;
   return $rows;
+}
+
+function db_fetch_assoc($result)
+{
+  return $result->fetch_assoc();
 }
 
 function db_search($tablename, $params = [])
