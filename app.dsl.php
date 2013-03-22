@@ -34,7 +34,7 @@ replaceable('static_url', function($path = '') use($app) {
 });
 
 replaceable('current_url', function() use($app) {
-  return 'http://' . $app->request()->host() . $app->path() . $app->url();
+  return 'http://' . $app->request()->host() . $app->path() . $app->request->url();
 });
 
 replaceable('relative_url', function($path = '') use($app) {
