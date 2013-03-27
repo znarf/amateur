@@ -13,6 +13,12 @@ foreach (['url', 'url_match', 'url_is', 'url_start_with'] as $method) {
   replaceable($method, [$request, $method]);
 }
 
+/* Headers */
+
+replaceable("is_ajax", function() use($request) {
+  return $request->header('X-Requested-With') == 'XMLHttpRequest';
+});
+
 /* Methods */
 
 foreach (['get', 'post', 'patch', 'put', 'delete'] as $method) {
