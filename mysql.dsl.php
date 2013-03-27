@@ -54,6 +54,12 @@ function db_quote($arg)
   }
 }
 
+function db_date($str, $format = 'Y-m-d H:i:s')
+{
+  $timestamp  = strtotime($str);
+  return date($format, $timestamp);
+}
+
 function db_now($format = 'Y-m-d H:i:s')
 {
   return date($format);
