@@ -13,7 +13,7 @@ function db_connection()
       $db = db_params();
       $connection = new mysqli($db['host'], $db['username'], $db['password'], $db['name']);
       if ($connection->connect_error) {
-        throw new Exception($connection->connect_errno . ' - ' . $connection->connect_error, 503);
+        throw new HttpException("$connection->connect_error ($connection->connect_errno)", 503);
       }
       if (isset($db['charset'])) {
         $connection->set_charset($db['charset']);
@@ -27,7 +27,7 @@ function db_query($query)
   $connection = db_connection();
   $result = $connection->query($query);
   if (!$result) {
-    throw new Exception($connection->error, 500);
+    throw new HttpException($connection->error, 500);
   }
   return $result;
 }
