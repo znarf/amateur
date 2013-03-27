@@ -48,4 +48,9 @@ class Table
     return new static::$classname($values);
   }
 
+  static function delete($where = [])
+  {
+    return db_delete(static::$tablename, $where);
+  }
+
 }
