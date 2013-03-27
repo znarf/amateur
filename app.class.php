@@ -63,7 +63,8 @@ class App
     if (array_key_exists($name, $this->models)) {
       return $this->models[$name];
     } else {
-      include_once $this->dir() . '/models/' . $name . '.model.php';
+      $fn = include $this->dir() . '/models/' . $name . '.model.php';
+      if (is_callable($fn)) return $this->models[$name] = $fn();
       $classname = ucfirst($name);
       return $this->models[$name] = new $classname();
     }
