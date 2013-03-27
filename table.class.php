@@ -43,7 +43,7 @@ class Table
   {
     $result = db_insert(static::$tablename, $values);
     if (static::$primary && $id = db_insert_id()) {
-      $values[static::$primary] = $id;
+      return static::get($id);
     }
     return new static::$classname($values);
   }
