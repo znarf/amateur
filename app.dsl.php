@@ -19,8 +19,12 @@ replaceable('render', function($name, $args = []) use ($app) {
 
 /* Errors */
 
-replaceable('not_found', function() use ($app) {
-  $app->error(404, 'Not Found');
+replaceable('not_found', function($message = 'Not Found') use ($app) {
+  $app->error(404, $message);
+});
+
+replaceable('unknown_url', function() use ($app) {
+  $app->error(404, sprintf("No url match '%s'.", $app->request()->url()));
 });
 
 /* Url */
