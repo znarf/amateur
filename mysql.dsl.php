@@ -118,6 +118,15 @@ function db_insert_id()
   return $connection->insert_id;
 }
 
+function db_count($tablename, $where = [])
+{
+  $query  = "SELECT COUNT(*) as count FROM $tablename";
+  $query .= ' WHERE ' . (is_array($where) ? db_build_where($where) : $where);
+  $result = db_query($query);
+  $row = db_fetch_assoc($result);
+  return $row['count'];
+}
+
 function db_get_one($tablename, $where = [], $fields = [])
 {
   $fields = empty($fields) ? '*' : implode(', ', $fields);
