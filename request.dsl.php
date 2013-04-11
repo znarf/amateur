@@ -15,8 +15,13 @@ foreach (['url', 'url_match', 'url_is', 'url_start_with'] as $method) {
 
 /* Headers */
 
-replaceable("is_ajax", function() use($request) {
+replaceable('is_ajax', function() use($request) {
   return $request->header('X-Requested-With') == 'XMLHttpRequest';
+});
+
+replaceable('referer', function($default = null) use($request) {
+  $referer = $request->header('Referer');
+  return empty($referer) ? $default : $referer;
 });
 
 /* Methods */
@@ -27,7 +32,7 @@ foreach (['get', 'post', 'patch', 'put', 'delete'] as $method) {
   });
 }
 
-replaceable("is_write", function() use($request) {
+replaceable('is_write', function() use($request) {
   return in_array($request->method(), ['POST', 'PATCH', 'PUT', 'DELETE']);
 });
 
@@ -35,25 +40,25 @@ replaceable('check_method', [$request, 'check_method']);
 
 /* Params */
 
-replaceable("has_param", function($name) use($request) {
+replaceable('has_param', function($name) use($request) {
   return $request->param($name) ? true : false;
 });
 
-replaceable("set_param", function($name, $value) use($request) {
+replaceable('set_param', function($name, $value) use($request) {
   return $request->param($name, $value);
 });
 
-replaceable("get_param", function($name, $default = null) use($request) {
+replaceable('get_param', function($name, $default = null) use($request) {
   $value = $request->param($name);
   return $value ? $value : $default;
 });
 
-replaceable("get_int", function($name, $default = null) use($request) {
+replaceable('get_int', function($name, $default = null) use($request) {
   $value = $request->param($name);
   return $value ? (int)$value : $default;
 });
 
-replaceable("get_bool", function($name, $default = null) use($request) {
+replaceable('get_bool', function($name, $default = null) use($request) {
   $value = $request->param($name);
   return $value ? (bool)$value : $default;
 });
