@@ -138,7 +138,7 @@ function db_get_one($tablename, $where = [], $fields = [])
   }
 }
 
-function db_fetch_objects($result, $classname = '\Core\Ressource')
+function db_fetch_objects($result, $classname = '\Amateur\Model\Ressource')
 {
   $objects = [];
   while ($attributes = $result->fetch_assoc()) $objects[] = new $classname($attributes);

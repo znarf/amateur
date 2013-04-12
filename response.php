@@ -2,15 +2,15 @@
 
 /* Class */
 
-require_once __DIR__ . '/response.class.php';
+require_once __DIR__ . '/core/response.class.php';
 
 /* Instanciate */
 
-$GLOBALS['response'] = $response = new \Core\Response;
+$GLOBALS['response'] = $response = new \Amateur\Core\Response;
 
 /* DSL */
 
-require __DIR__ . '/response.dsl.php';
+require __DIR__ . '/core/response.dsl.php';
 
 /* Return */
 

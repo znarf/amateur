@@ -2,7 +2,7 @@
 
 if (empty($response)) {
   require_once __DIR__ . '/response.class.php';
-  $GLOBALS['response'] = $response = new \Core\Response;
+  $GLOBALS['response'] = $response = new \Amateur\Core\Response;
 }
 
 foreach (['status', 'set_header', 'ok'] as $method) {

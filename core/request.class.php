@@ -1,6 +1,6 @@
 <?php
 
-namespace Core;
+namespace Amateur\Core;
 
 class Request
 {

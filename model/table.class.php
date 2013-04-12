@@ -1,6 +1,6 @@
 <?php
 
-namespace Core;
+namespace Amateur\Model;
 
 class Table
 {
@@ -18,6 +18,13 @@ class Table
     if (static::$primary) {
       return static::get_one(static::$primary, $id);
     }
+  }
+
+  static function with_ids($ids)
+  {
+    $ressources = [];
+    foreach ($ids as $id) if ($ressource = static::get($id)) $ressources[] = $ressource;
+    return $ressources;
   }
 
   static function get_one($key, $value)
