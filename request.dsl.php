@@ -13,7 +13,7 @@ foreach (['url', 'url_match', 'url_is', 'url_start_with'] as $method) {
   replaceable($method, [$request, $method]);
 }
 
-/* Headers */
+# Headers
 
 replaceable('is_ajax', function() use($request) {
   return $request->header('X-Requested-With') == 'XMLHttpRequest';
@@ -24,7 +24,7 @@ replaceable('referer', function($default = null) use($request) {
   return empty($referer) ? $default : $referer;
 });
 
-/* Methods */
+# Methods
 
 foreach (['get', 'post', 'patch', 'put', 'delete'] as $method) {
   replaceable("is_$method", function() use($request, $method) {
@@ -38,7 +38,7 @@ replaceable('is_write', function() use($request) {
 
 replaceable('check_method', [$request, 'check_method']);
 
-/* Params */
+# Parameters
 
 replaceable('has_param', function($name) use($request) {
   return $request->param($name) ? true : false;
@@ -50,17 +50,25 @@ replaceable('set_param', function($name, $value) use($request) {
 
 replaceable('get_param', function($name, $default = null) use($request) {
   $value = $request->param($name);
-  return $value ? $value : $default;
+  return isset($value) ? $value : $default;
 });
 
 replaceable('get_int', function($name, $default = null) use($request) {
   $value = $request->param($name);
-  return $value ? (int)$value : $default;
+  return isset($value) ? (int)$value : $default;
 });
 
 replaceable('get_bool', function($name, $default = null) use($request) {
   $value = $request->param($name);
-  return $value ? (bool)$value : $default;
+  if (is_string($value) && strcasecmp($value, 'true')) {
+    return true;
+  }
+  elseif (is_string($value) && strcasecmp($value, 'false')) {
+    return false;
+  }
+  else {
+    return isset($value) ? (bool)$value : $default;
+  }
 });
 
 replaceable('check_parameters', [$request, 'check_parameters']);

@@ -17,7 +17,7 @@ replaceable('render', function($name, $args = []) use ($app) {
   $app->layout($app->view($name, $args));
 });
 
-/* Errors */
+# Errors
 
 replaceable('not_found', function($message = 'Not Found') use ($app) {
   $app->error(404, $message);
@@ -27,7 +27,7 @@ replaceable('unknown_url', function() use ($app) {
   $app->error(404, sprintf("No url match '%s'.", $app->request()->url()));
 });
 
-/* Url */
+# Url
 
 replaceable('absolute_url', function($path = '') use($app) {
   return 'http://' . $app->request()->host() . $app->path() . $path;
