@@ -60,10 +60,10 @@ replaceable('get_int', function($name, $default = null) use($request) {
 
 replaceable('get_bool', function($name, $default = null) use($request) {
   $value = $request->param($name);
-  if (is_string($value) && strcasecmp($value, 'true')) {
+  if (is_string($value) && strtolower($value) == 'true') {
     return true;
   }
-  elseif (is_string($value) && strcasecmp($value, 'false')) {
+  elseif (is_string($value) && strtolower($value) == 'false') {
     return false;
   }
   else {
