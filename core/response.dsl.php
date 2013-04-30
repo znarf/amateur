@@ -5,12 +5,6 @@ if (empty($response)) {
   $GLOBALS['response'] = $response = new \Amateur\Core\Response;
 }
 
-foreach (['status', 'set_header', 'ok'] as $method) {
+foreach (['status', 'set_header', 'redirect', 'ok'] as $method) {
   replaceable($method, [$response, $method]);
 }
-
-replaceable('redirect', function($path) use($response) {
-  $url = app_path() . $path;
-  $response->set_header("Location", $url);
-  exit;
-});
