@@ -135,9 +135,13 @@ class App
     try {
       $start = include $this->dir($dir) . '/app.start.php';
       if (is_callable($start)) $start($req, $res);
-    } catch (\HttpException $e) {
+    }
+    catch (\HttpException $e) {
+      ob_end_clean();
       $this->error($e->getCode(), $e->getMessage(), $e->getTraceAsString());
-    } catch (\Exception $e) {
+    }
+    catch (\Exception $e) {
+      ob_end_clean();
       $this->error(500, $e->getMessage(), $e->getTraceAsString());
     }
   }
