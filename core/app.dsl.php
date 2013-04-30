@@ -15,6 +15,7 @@ foreach (['start', 'model', 'module', 'helper', 'action', 'view', 'layout', 'par
 
 replaceable('render', function($name, $args = []) use ($app) {
   $app->layout($app->view($name, $args));
+  exit;
 });
 
 # Errors
