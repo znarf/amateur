@@ -46,6 +46,8 @@ function get_param($name, $default = null) { global $request; $value = $request-
 
 function get_int($name, $default = null) { global $request; $value = $request->param($name); return isset($value) ? (int)$value : $default; }
 
+function get_bool($name, $default = null) { global $request; $value = $request->param($name); return isset($value) ? $request->boolise($value) : $default; }
+
 function request_host() { global $request; return $request->host(); }
 
 function request_method() { global $request; return $request->method(); }

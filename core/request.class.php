@@ -43,6 +43,19 @@ class Request
     if (isset($_REQUEST[$name])) return $_REQUEST[$name];
   }
 
+  function boolise($value)
+  {
+    if (is_string($value) && strtolower($value) == 'true') {
+      return true;
+    }
+    elseif (is_string($value) && strtolower($value) == 'false') {
+      return false;
+    }
+    else {
+      return (bool)$value;
+    }
+  }
+
   function header($name)
   {
     if (array_key_exists($name, $this->headers)) {
