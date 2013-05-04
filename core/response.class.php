@@ -5,27 +5,29 @@ namespace Amateur\Core;
 class Response
 {
 
-  static function status($code)
+  function status($code)
   {
     http_response_code($code);
   }
 
-  static function ok($content)
-  {
-    echo $content;
-  }
-
-  static function set_header($name, $value)
+  function set_header($name, $value)
   {
     header("$name:$value");
   }
 
-  static function redirect($path, $permanent = false)
+  function redirect($path, $permanent = false)
   {
-    global $app;
+    $app = core_object('app');
     $url = strpos($path, '://') !== false ? $path : $app->path() . $path;
-    self::status($permanent ? 301 : 302);
-    self::set_header("Location", $url);
+    $this->status($permanent ? 301 : 302);
+    $this->set_header('Location', $url);
+    exit;
+  }
+
+  function render($name, $args = [])
+  {
+    $app = core_object('app');
+    $app->layout($app->view($name, $args));
     exit;
   }
 

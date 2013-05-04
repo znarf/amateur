@@ -23,14 +23,14 @@ class App
 
   function request()
   {
-    return isset($this->request) ? $this->request : $this->request = core_object(core_dir . '/request.php');
+    return isset($this->request) ? $this->request : $this->request = core_object('request');
   }
 
   public $response;
 
   function response()
   {
-    return isset($this->response) ? $this->response : $this->response = core_object(core_dir . '/response.php');
+    return isset($this->response) ? $this->response : $this->response = core_object('response');
   }
 
   public $modules = [];
@@ -86,15 +86,10 @@ class App
     return $this->helpers[$name] = is_object($result) ? $result : null;
   }
 
-  function action($name, $params = [])
+  function partial($name, $args = [])
   {
-    extract($params);
-    include $this->dir() . '/actions/' . $name . '.action.php';
-  }
-
-  function partial($name, $params = [])
-  {
-    extract($params);
+    extract($args);
+    $params = $args;
     include $this->dir() . '/partials/' . $name . '.partial.php';
   }
 
@@ -102,18 +97,18 @@ class App
 
   function view($name, $args = [])
   {
-    // Set view
+    # Set view
     if (is_callable($args)) {
       return $this->views[$name] = $args;
     }
-    // Start Template
+    # Start Template
     ob_start();
-    // Function view
+    # Function view
     if (array_key_exists($name, $this->views)) {
       $this->views[$name]($args);
       return ob_get_clean();
     }
-    // Include view
+    # Include view
     $filename = $this->dir() . '/views/' . $name . '.view.php';
     if (file_exists($filename)) {
       extract($args);

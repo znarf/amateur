@@ -1,27 +1,5 @@
 <?php
 
-defined('core_dir') || define('core_dir', __DIR__);
-
-class HttpException extends Exception {}
-
-function core_require($filename)
-{
-  $filename = realpath($filename);
-  return include $filename;
-}
-
-function core_object($filename)
-{
-  $result = core_require($filename);
-  return is_callable($result) ? $result() : $result;
-}
-
-function http_error($code, $message)
-{
-  return new HttpException($message, $code);
-}
-
-/*
 function replaceable_call($callable, $args)
 {
   if (is_array($callable) || count($args) > 5) {
@@ -36,7 +14,6 @@ function replaceable_call($callable, $args)
     case 5: return $callable($args[0], $args[1], $args[2], $args[3], $args[4]);
   }
 }
-*/
 
 function replaceable($name, $replaceable)
 {

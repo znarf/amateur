@@ -5,83 +5,86 @@ namespace Amateur\Core;
 class Request
 {
 
-  static $url;
+  public $url;
 
-  static function url($value = null)
+  public $headers = [];
+
+  function url($value = null)
   {
-    global $app;
-    // Set
-    if ($value !== null) return self::$url = $value;
-    // Get
-    if (!self::$url) {
-      $request_uri = strtok($_SERVER['REQUEST_URI'], '?');
-      self::$url = str_replace($app->path(), '', $request_uri);
+    if (isset($value)) {
+      return $this->url = $value;
     }
-    return self::$url;
+    if (!isset($this->url)) {
+      $app = core_object('app');
+      $request_uri = strtok($_SERVER['REQUEST_URI'], '?');
+      $this->url = str_replace($app->path(), '', $request_uri);
+    }
+    return $this->url;
   }
 
-  static function method()
+  function method()
   {
     return isset($_REQUEST['forceMethod']) ? $_REQUEST['forceMethod'] : $_SERVER['REQUEST_METHOD'];
   }
 
-  static function host()
+  function host()
   {
     return $_SERVER['HTTP_HOST'];
   }
 
-  static function param($name, $value = null)
+  function protocol()
+  {
+    return 'http';
+  }
+
+  function param($name, $value = null)
   {
     if ($value !== null) return $_REQUEST[$name] = $value;
     if (isset($_REQUEST[$name])) return $_REQUEST[$name];
   }
 
-  static $headers = [];
-
-  static function header($name)
+  function header($name)
   {
-    if (array_key_exists($name, self::$headers)) {
-      return self::$headers[$name];
+    if (array_key_exists($name, $this->headers)) {
+      return $this->headers[$name];
     } else {
       $key = 'HTTP_' . str_replace('-', '_', strtoupper($name));
-      return self::$headers[$name] = isset($_SERVER[$key]) ? $_SERVER[$key] : null;
+      return $this->headers[$name] = isset($_SERVER[$key]) ? $_SERVER[$key] : null;
     }
   }
 
-  /* Url */
-
-  static function url_is($str)
+  function url_is($str)
   {
-    return $str == self::url();
+    return $str == $this->url();
   }
 
-  static function url_start_with($str)
+  function url_start_with($str)
   {
-    return strpos(self::url(), $str) === 0;
+    return strpos($this->url(), $str) === 0;
   }
 
-  static function url_match($route)
+  function url_match($route)
   {
     $route = "^$route$";
     $route = str_replace('/', '\/', $route);
     $route = str_replace('*', '([^\/]+)', $route);
-    $result = preg_match("/$route/", self::url(), $matches);
+    $result = preg_match("/$route/", $this->url(), $matches);
     return $result ? $matches : false;
   }
 
-  static function check_method($methods)
+  function check_method($methods)
   {
     $methods = is_string($methods) ? explode(",", strtoupper($methods)) : $methods;
-    if (!in_array(self::method(), $methods)) {
+    if (!in_array($this->method(), $methods)) {
       throw http_error(405, 'Method Not Allowed');
     }
   }
 
-  static function check_parameters($parameters)
+  function check_parameters($parameters)
   {
-    $parameters = is_string($parameters) ? explode(",", $parameters) : $parameters;
+    $parameters = is_string($parameters) ? explode(',', $parameters) : $parameters;
     foreach ($parameters as $name) {
-      if (!self::param($name)) {
+      if (!$this->param($name)) {
         throw http_error(400, "Missing Parameter ($name)");
       }
     }

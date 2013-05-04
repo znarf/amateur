@@ -1,9 +1,58 @@
 <?php
 
-if (empty($request)) {
-  require_once __DIR__ . '/request.class.php';
-  $GLOBALS['request'] = $request = new \Amateur\Core\Request;
+defined('amateur_dir') || define('amateur_dir', __DIR__);
+
+require_once amateur_dir . '/core/core.functions.php';
+
+require_once amateur_dir . '/core/replaceable.functions.php';
+
+$app = core_object('app');
+
+$request = core_object('request');
+
+$response = core_object('response');
+
+# App
+# ---
+
+foreach (['dir', 'path', 'start'] as $method) {
+  replaceable("app_$method", [$app, $method]);
 }
+
+foreach (['start', 'model', 'module', 'helper', 'view', 'layout', 'error'] as $method) {
+  replaceable($method, [$app, $method]);
+}
+
+# Errors
+
+replaceable('not_found', function($message = 'Not Found') use ($app) {
+  $app->error(404, $message);
+});
+
+replaceable('unknown_url', function() use ($app) {
+  $app->error(404, sprintf("No url match '%s'.", $app->request()->url()));
+});
+
+# Url
+
+replaceable('absolute_url', function($path = '') use($app) {
+  return 'http://' . $app->request()->host() . $app->path() . $path;
+});
+
+replaceable('static_url', function($path = '') use($app) {
+  return '//' . $app->request()->host() . $app->path() . $path;
+});
+
+replaceable('current_url', function() use($app) {
+  return 'http://' . $app->request()->host() . $app->path() . $app->request->url();
+});
+
+replaceable('relative_url', function($path = '') use($app) {
+  return $app->path() . $path;
+});
+
+# Request
+# -------
 
 foreach (['host', 'method', 'header'] as $method) {
   replaceable("request_$method", [$request, $method]);
@@ -72,3 +121,10 @@ replaceable('get_bool', function($name, $default = null) use($request) {
 });
 
 replaceable('check_parameters', [$request, 'check_parameters']);
+
+# Response
+# --------
+
+foreach (['status', 'set_header', 'redirect', 'render'] as $method) {
+  replaceable($method, [$response, $method]);
+}
