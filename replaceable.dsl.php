@@ -6,11 +6,11 @@ require_once amateur_dir . '/core/core.functions.php';
 
 require_once amateur_dir . '/core/replaceable.functions.php';
 
-$app = core_object('app');
+$app = core('app');
 
-$request = core_object('request');
+$request = $app->request();
 
-$response = core_object('response');
+$response = $app->response();
 
 # App
 # ---

@@ -9,15 +9,19 @@ class Request
 
   public $headers = [];
 
+  function app()
+  {
+    return core('app');
+  }
+
   function url($value = null)
   {
     if (isset($value)) {
       return $this->url = $value;
     }
     if (!isset($this->url)) {
-      $app = core_object('app');
       $request_uri = strtok($_SERVER['REQUEST_URI'], '?');
-      $this->url = str_replace($app->path(), '', $request_uri);
+      $this->url = str_replace($this->app()->path(), '', $request_uri);
     }
     return $this->url;
   }

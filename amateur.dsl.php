@@ -6,13 +6,15 @@ require_once amateur_dir . '/core/core.functions.php';
 
 # Core Objects
 
-$app = core_object('app');
+$app = core('app');
 
-$request = core_object('request');
+$request = $app->request();
 
-$response = core_object('response');
+$response = $app->response();
 
 # App
+
+function app() { global $app; return $app; }
 
 function start($dir = null) { global $app; return $app->start($dir); }
 
@@ -29,6 +31,8 @@ function partial($name, $args = []) { global $app; return $app->partial($name, $
 function layout($content = '', $name = 'default') { global $app; return $app->layout($content, $name); }
 
 # Request
+
+function request() { global $request; return $request; }
 
 function url($value = null) { global $request; return $request->url($value); }
 
@@ -73,6 +77,8 @@ function check_method($methods) { global $request; return $request->check_method
 function check_parameters($parameters) { global $request; return $request->check_parameters($parameters); }
 
 # Response
+
+function response() { global $response; return $response; }
 
 function status($code) { global $response; return $response->status($code); }
 

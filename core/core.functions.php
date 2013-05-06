@@ -6,8 +6,11 @@ function core_require($filename)
   return include $filename;
 }
 
-function core_object($name)
+function core($name, $value = null)
 {
+  if ($value) {
+    return $GLOBALS[$name] = $value;
+  }
   if (empty($GLOBALS[$name])) {
     $classname = '\Amateur\Core\\' . ucfirst($name);
     if (!class_exists($classname, false)) {

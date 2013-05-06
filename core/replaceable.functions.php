@@ -27,4 +27,5 @@ function replaceable($name, $replaceable)
       throw new Exception("Unknown replaceable (' . $name . ')");
     }');
   $replaceables[$name] = $replaceable;
+  return $replaceable;
 }

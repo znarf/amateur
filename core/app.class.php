@@ -19,18 +19,14 @@ class App
     return isset($value) ? $this->path = $value : $this->path;
   }
 
-  public $request;
-
   function request()
   {
-    return isset($this->request) ? $this->request : $this->request = core_object('request');
+    return core('request');
   }
-
-  public $response;
 
   function response()
   {
-    return isset($this->response) ? $this->response : $this->response = core_object('response');
+    return core('response');
   }
 
   public $modules = [];
