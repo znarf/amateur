@@ -90,6 +90,8 @@ function redirect($path, $permanent = false) { global $response; return $respons
 
 # Errors
 
+function error($code = 500, $message = 'Application Error') { global $app; return $app->error($code, $message); }
+
 function not_found($message = 'Not Found') { global $app; return $app->error(404, $message); }
 
 function unknown_url() { global $app, $request; return $app->error(404, sprintf("No url match '%s'.", $request->url())); }
