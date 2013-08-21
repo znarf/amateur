@@ -1,22 +1,28 @@
 <?php
 
+use \Amateur\Model\Cache as Cache;
+
 function cache_connection($connection = null)
 {
-  static $cache_connection;
-  return $connection ? $cache_connection = $connection : $cache_connection;
+  Cache::$memcache = $connection;
+}
+
+function cache_preload($keys)
+{
+  return Cache::preload($keys);
 }
 
 function cache_get($key)
 {
-  if ($connection = cache_connection()) return $connection->get($key);
+  return Cache::get($key);
 }
 
 function cache_delete($key)
 {
-  if ($connection = cache_connection()) return $connection->delete($key);
+  return Cache::delete($key);
 }
 
-function cache_set($key, $var, $expire = 0)
+function cache_set($key, $value, $expire = 0)
 {
-  if ($connection = cache_connection()) return $connection->set($key, $var, false, $expire);
+  return Cache::set($key, $value, $expire);
 }

@@ -130,7 +130,7 @@ function db_count($tablename, $where = [])
 function db_get_one($tablename, $where = [], $fields = [])
 {
   $fields = empty($fields) ? '*' : implode(', ', $fields);
-  $query  = "SELECT $fields FROM $tablename";
+  $query  = "SELECT {$fields} FROM {$tablename}";
   $query .= ' WHERE ' . (is_array($where) ? db_build_where($where) : $where);
   $result = db_query($query);
   if ($result && $row = $result->fetch_assoc()) {
@@ -141,7 +141,7 @@ function db_get_one($tablename, $where = [], $fields = [])
 function db_fetch_objects($result, $classname = '\Amateur\Model\Ressource')
 {
   $objects = [];
-  while ($attributes = $result->fetch_assoc()) $objects[] = new $classname($attributes);
+  while ($object = $result->fetch_object($classname)) $objects[] = $object;
   return $objects;
 }
 
