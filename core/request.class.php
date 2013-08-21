@@ -19,7 +19,7 @@ class Request
     if (isset($value)) {
       return $this->url = $value;
     }
-    if (!isset($this->url)) {
+    elseif (!isset($this->url)) {
       $request_uri = strtok($_SERVER['REQUEST_URI'], '?');
       $this->url = str_replace($this->app()->path(), '', $request_uri);
     }
@@ -43,8 +43,12 @@ class Request
 
   function param($name, $value = null)
   {
-    if ($value !== null) return $_REQUEST[$name] = $value;
-    if (isset($_REQUEST[$name])) return $_REQUEST[$name];
+    if (isset($value)) {
+      return $_REQUEST[$name] = $value;
+    }
+    elseif (isset($_REQUEST[$name])) {
+      return $_REQUEST[$name];
+    }
   }
 
   function boolise($value)
@@ -64,7 +68,8 @@ class Request
   {
     if (array_key_exists($name, $this->headers)) {
       return $this->headers[$name];
-    } else {
+    }
+    else {
       $key = 'HTTP_' . str_replace('-', '_', strtoupper($name));
       return $this->headers[$name] = isset($_SERVER[$key]) ? $_SERVER[$key] : null;
     }
@@ -101,7 +106,7 @@ class Request
   {
     $parameters = is_string($parameters) ? explode(',', $parameters) : $parameters;
     foreach ($parameters as $name) {
-      if (!$this->param($name)) {
+      if ($this->param($name) === null) {
         throw http_error(400, "Missing Parameter ($name)");
       }
     }

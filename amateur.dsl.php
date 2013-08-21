@@ -26,8 +26,6 @@ function model($name) { global $app; return $app->model($name); }
 
 function view($name, $args = []) { global $app; return $app->view($name, $args); }
 
-function partial($name, $args = []) { global $app; return $app->partial($name, $args); }
-
 function layout($content = '', $name = 'default') { global $app; return $app->layout($content, $name); }
 
 # Request
@@ -75,6 +73,8 @@ function is_write() { global $request; return in_array($request->method(), ['POS
 function check_method($methods) { global $request; return $request->check_method($methods); }
 
 function check_parameters($parameters) { global $request; return $request->check_parameters($parameters); }
+
+function referer() { global $request; return (string)$request->header('Referer'); }
 
 # Response
 

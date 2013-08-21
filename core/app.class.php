@@ -29,23 +29,41 @@ class App
     return core('response');
   }
 
+  # Files
+
+  function filename($type, $name)
+  {
+    $folder = "{$type}s";
+    return $this->dir() . "/{$folder}/{$name}.{$type}.php";
+  }
+
+  # Modules
+
   public $modules = [];
 
-  function module($name, $callable = null)
+  function module($name, $args = [])
   {
-    if ($callable) return $this->modules[$name] = $callable;
+    # Set module
+    if (is_callable($args)) {
+      return $this->modules[$name] = $args;
+    }
     $app = $this;
     $req = $this->request();
     $res = $this->response();
     if (array_key_exists($name, $this->modules)) {
-      $fn = $this->modules[$name];
-    } else {
-      $fn = include $this->dir() . '/modules/' . $name . '.module.php';
-      if (!is_callable($fn)) return $fn;
-      $this->modules[$name] = $fn;
+      $module = $this->modules[$name];
+      return $module($req, $res);
     }
-    return $fn($req, $res);
+    else {
+      $module = include $this->filename('module', $name);
+      if (is_callable($module)) {
+        $this->modules[$name] = $module;
+        return $module($req, $res);
+      }
+    }
   }
+
+  # Models
 
   public $models = [];
 
@@ -57,14 +75,20 @@ class App
       return $_models;
     }
     if (array_key_exists($name, $this->models)) {
-      return $this->models[$name];
-    } else {
-      $fn = include $this->dir() . '/models/' . $name . '.model.php';
-      if (is_callable($fn)) return $this->models[$name] = $fn();
-      $classname = ucfirst($name);
-      return $this->models[$name] = new $classname();
+      $model = $this->models[$name];
     }
+    else {
+      $this->models[$name] = $model = include $this->filename('model', $name);
+      # If no model returned (object or callable), we guess the classname and instanciate it
+      if (!$model) {
+        $classname = ucfirst($name);
+        $this->models[$name] = $model = new $classname();
+      }
+    }
+    return is_callable($model) ? $model() : $model;
   }
+
+  # Helpers
 
   public $helpers = [];
 
@@ -76,18 +100,15 @@ class App
       return $_helpers;
     }
     if (array_key_exists($name, $this->helpers)) {
-      return $this->helpers[$name];
+      $helper = $this->helpers[$name];
     }
-    $result = include $this->dir() . '/helpers/' . $name . '.helper.php';
-    return $this->helpers[$name] = is_object($result) ? $result : null;
+    else {
+      $this->helpers[$name] = $helper = include $this->filename('helper', $name);
+    }
+    return is_callable($helper) ? $helper() : $helper;
   }
 
-  function partial($name, $args = [])
-  {
-    extract($args);
-    $params = $args;
-    include $this->dir() . '/partials/' . $name . '.partial.php';
-  }
+  # Views
 
   public $views = [];
 
@@ -105,17 +126,19 @@ class App
       return ob_get_clean();
     }
     # Include view
-    $filename = $this->dir() . '/views/' . $name . '.view.php';
-    if (file_exists($filename)) {
+    $template =  $this->filename('view', $name);
+    if (file_exists($template)) {
       extract($args);
-      include $filename;
+      include $template;
       return ob_get_clean();
     }
   }
 
+  # Layouts
+
   function layout($content = '', $name = 'default')
   {
-    include $this->dir() . '/layouts/' . $name . '.layout.php';
+    include $this->filename('layout', $name);
   }
 
   function start($dir = null)
@@ -140,7 +163,7 @@ class App
   function error($code = 500, $message = 'Application Error', $trace = '')
   {
     $this->response()->status($code);
-    // Try error views
+    # Try error views
     foreach ([$code, 'error'] as $view) {
       if ($result = $this->view($view, compact('code', 'message', 'trace'))) break;
     }

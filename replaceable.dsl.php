@@ -6,6 +6,8 @@ require_once amateur_dir . '/core/core.functions.php';
 
 require_once amateur_dir . '/core/replaceable.functions.php';
 
+# Core Objects
+
 $app = core('app');
 
 $request = $app->request();
@@ -13,7 +15,6 @@ $request = $app->request();
 $response = $app->response();
 
 # App
-# ---
 
 foreach (['dir', 'path', 'start'] as $method) {
   replaceable("app_$method", [$app, $method]);
@@ -23,8 +24,6 @@ foreach (['start', 'model', 'module', 'helper', 'view', 'layout', 'error'] as $m
   replaceable($method, [$app, $method]);
 }
 
-# Errors
-
 replaceable('not_found', function($message = 'Not Found') use ($app) {
   $app->error(404, $message);
 });
@@ -32,8 +31,6 @@ replaceable('not_found', function($message = 'Not Found') use ($app) {
 replaceable('unknown_url', function() use ($app) {
   $app->error(404, sprintf("No url match '%s'.", $app->request()->url()));
 });
-
-# Url
 
 replaceable('absolute_url', function($path = '') use($app) {
   return 'http://' . $app->request()->host() . $app->path() . $path;
@@ -52,7 +49,6 @@ replaceable('relative_url', function($path = '') use($app) {
 });
 
 # Request
-# -------
 
 foreach (['host', 'method', 'header'] as $method) {
   replaceable("request_$method", [$request, $method]);
@@ -62,8 +58,6 @@ foreach (['url', 'url_match', 'url_is', 'url_start_with'] as $method) {
   replaceable($method, [$request, $method]);
 }
 
-# Headers
-
 replaceable('is_ajax', function() use($request) {
   return $request->header('X-Requested-With') == 'XMLHttpRequest';
 });
@@ -72,8 +66,6 @@ replaceable('referer', function($default = null) use($request) {
   $referer = $request->header('Referer');
   return empty($referer) ? $default : $referer;
 });
-
-# Methods
 
 foreach (['get', 'post', 'patch', 'put', 'delete'] as $method) {
   replaceable("is_$method", function() use($request, $method) {
@@ -86,8 +78,6 @@ replaceable('is_write', function() use($request) {
 });
 
 replaceable('check_method', [$request, 'check_method']);
-
-# Parameters
 
 replaceable('has_param', function($name) use($request) {
   return $request->param($name) ? true : false;
@@ -115,7 +105,6 @@ replaceable('get_bool', function($name, $default = null) use($request) {
 replaceable('check_parameters', [$request, 'check_parameters']);
 
 # Response
-# --------
 
 foreach (['status', 'set_header', 'redirect', 'render'] as $method) {
   replaceable($method, [$response, $method]);
