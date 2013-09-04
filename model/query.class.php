@@ -176,30 +176,35 @@ class Query
 
   function fetch_one()
   {
+    $this->type = self::SELECT;
     $result = $this->limit(1)->execute();
     return $result ? Db::fetch_assoc($result) : null;
   }
 
   function fetch_all()
   {
+    $this->type = self::SELECT;
     $result = $this->execute();
     return $result ? Db::fetch_all($result) : [];
   }
 
   function fetch_object($classname = 'Ressource')
   {
+    $this->type = self::SELECT;
     $result = $this->limit(1)->execute();
     return $result ? Db::fetch_object($result, $classname) : null;
   }
 
   function fetch_objects($classname = 'Ressource')
   {
+    $this->type = self::SELECT;
     $result = $this->execute();
     return $result ? Db::fetch_objects($result, $classname) : [];
   }
 
   function fetch_ids($key = 'id')
   {
+    $this->type = self::SELECT;
     $result = $this->execute();
     return $result ? Db::fetch_ids($result, $key) : [];
   }

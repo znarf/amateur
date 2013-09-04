@@ -170,24 +170,29 @@ class Table
     return $this->query()->select($columns);
   }
 
+  function where($where)
+  {
+    return $this->query()->where($where);
+  }
+
   function fetch_one($where = [])
   {
-    return $this->select()->where($where)->fetch_one();
+    return $this->where($where)->fetch_one();
   }
 
   function fetch_all($where = [])
   {
-    return $this->select()->where($where)->fetch_all();
+    return $this->where($where)->fetch_all();
   }
 
   function fetch_object($where = [])
   {
-    return $this->select()->where($where)->fetch_object($this->classname);
+    return $this->where($where)->fetch_object($this->classname);
   }
 
   function fetch_objects($where = [])
   {
-    return $this->select()->where($where)->fetch_objects($this->classname);
+    return $this->where($where)->fetch_objects($this->classname);
   }
 
 }
