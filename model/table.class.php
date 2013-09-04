@@ -11,27 +11,32 @@ class Table
 
   public $unique_indexes = [];
 
-  function get($id)
+  function primary()
   {
-    if ($this->primary) {
-      return $this->get_one($this->primary, $id);
+    if (!$this->primary) {
+      throw Exception("No primary set for '{$this->tablename}'");
     }
+    return $this->primary;
   }
 
-  function with_ids($ids)
+  function cache_key($key, $value, $type = 'raw')
   {
-    $ressources = [];
-    foreach ($ids as $id) if ($ressource = $this->get($id)) $ressources[] = $ressource;
-    return $ressources;
+     return "{$this->tablename}_{$type}_{$key}_{$value}";
+  }
+
+  function preload($key, $ids)
+  {
+    $cache_keys = array_map(function($id) use($key) { return $this->cache_key($key, $id); }, $ids);
+    Cache::preload($cache_keys);
   }
 
   function get_one($key, $value)
   {
     # From Cache
     $use_cache = in_array($key, $this->unique_indexes);
-    $cache_key = $this->tablename . "_raw_" . $key . "_" . $value;
     if ($use_cache) {
-      $row = cache_get($cache_key);
+      $cache_key = $this->cache_key($key, $value);
+      $row = Cache::get($cache_key);
       if (is_array($row)) {
         return new $this->classname($row);
       }
@@ -40,75 +45,149 @@ class Table
       }
     }
     # From DB
-    $row = db_get_one($this->tablename, [$key => $value]);
+    $row = $this->fetch_one([$key => $value]);
     if ($use_cache) {
-      cache_set($cache_key, $row ? $row : 0);
+      Cache::set($cache_key, $row ? $row : 0);
     }
     if ($row) {
       return new $this->classname($row);
     }
   }
 
-  function find_one($where = [])
+  function get_all($key, $values)
   {
-    $row = db_get_one($this->tablename, $where);
-    if ($row) {
-      return new $this->classname($row);
+    $objects = [];
+    # From Cache
+    $use_cache = in_array($key, $this->unique_indexes);
+    if ($use_cache) {
+      foreach ($values as $i => $value) {
+        $objects[$value] = null;
+        # For now, we assume preloading
+        $row = Cache::get($this->cache_key($key, $value), true);
+        if (is_array($row)) {
+          $objects[$value] = new $this->classname($row);
+          unset($values[$i]);
+        }
+        elseif ($row === 0) {
+          unset($values[$i]);
+        }
+      }
+    }
+    # From DB
+    if (count($values)) {
+      # We iterate over chunk of 1000
+      foreach (array_chunk($values, 1000) as $values_chunk) {
+        $rows = $this->fetch_all([$key => $values_chunk]);
+        foreach ($rows as $row) {
+          $value = $row[$key];
+          if ($use_cache) {
+            Cache::set($this->cache_key($key, $value), $row ? $row : 0);
+          }
+          $objects[$value] = new $this->classname($row);
+        }
+      }
+    }
+    return array_filter(array_values($objects));
+  }
+
+  function get($arg)
+  {
+    $key = $this->primary();
+    if (is_array($arg)) {
+      $this->preload($key, $arg);
+      return $this->get_all($key, $arg);
+    }
+    else {
+      return $this->get_one($key, $arg);
     }
   }
 
-  function search($params = [])
+  function insert($set)
   {
-    $result = db_search($this->tablename, $params);
-    return $result;
+    return $this->query()->insert()->set($set)->execute();
   }
 
-  function create($values = [])
+  function create($set)
   {
-    $result = db_insert($this->tablename, $values);
-    if ($this->primary && $id = db_insert_id()) {
-      # Update Cache
-      $row = db_get_one($this->tablename, [$this->primary => $id]);
+    $this->insert($set);
+    return $this->get(core('db')->insert_id());
+  }
+
+  function update($where, $set)
+  {
+    # Ressource given
+    if (is_object($where)) {
+      $ressource = $where;
+      $key = $this->primary();
+      $where = [$key => $ressource->$key];
+    }
+    # Update Db
+    $this->query()->update()->where($where)->set($set)->execute();
+    # Update Cache + Return ressource
+    if (isset($ressource)) {
+      $row = $this->fetch_one($where);
       foreach ($this->unique_indexes as $key) {
-        $cache_key = $this->tablename . "_raw_" . $key . "_" . $row[$key];
-        cache_set($cache_key, $row);
+        $cache_key = $this->cache_key($key, $row[$key]);
+        Cache::set($cache_key, $row);
       }
       return new $this->classname($row);
     }
-    return new $this->classname($values);
   }
 
-  function update($ressource, $set = [])
+  function delete($where)
   {
-    if ($primary = $this->primary) {
-      $where = [$primary => $ressource->$primary];
-      # Update Db
-      $result = db_update($this->tablename, $set, $where);
-      # Update Cache
-      $row = db_get_one($this->tablename, $where);
-      foreach ($this->unique_indexes as $key) {
-        $cache_key = $this->tablename . "_raw_" . $key . "_" . $row[$key];
-        cache_set($cache_key, $row);
-      }
-      # Return new ressource
-      return new $this->classname($row);
+    # Ressource given
+    if (is_object($where)) {
+      $ressource = $where;
+      $key = $this->primary();
+      $where = [$key => $ressource->$key];
     }
-  }
-
-  function delete($ressource)
-  {
-    if ($primary = $this->primary) {
-      $where = [$primary => $ressource->$primary];
-      db_delete($this->tablename, $where);
+    # Update Db
+    $this->query()->delete()->where($where)->execute();
+    # Delete Cache
+    if (isset($ressource)) {
       foreach ($this->unique_indexes as $key) {
-        cache_delete($this->tablename . "_raw_" . $key . "_" . $ressource->$key);
+        $cache_key = $this->cache_key($key, $ressource->$key);
+        Cache::delete($cache_key);
       }
     }
   }
 
-  function delete_where($where = [])
+  function to_objects($rows)
   {
-    return db_delete($this->tablename, $where);
+    return array_map(function($row) { return new $this->classname($row); }, $rows);
+  }
+
+  # Query
+
+  function query()
+  {
+    return new Query($this->tablename);
+  }
+
+  function select($columns = null)
+  {
+    return $this->query()->select($columns);
+  }
+
+  function fetch_one($where = [])
+  {
+    return $this->select()->where($where)->fetch_one();
+  }
+
+  function fetch_all($where = [])
+  {
+    return $this->select()->where($where)->fetch_all();
+  }
+
+  function fetch_object($where = [])
+  {
+    return $this->select()->where($where)->fetch_object($this->classname);
+  }
+
+  function fetch_objects($where = [])
+  {
+    return $this->select()->where($where)->fetch_objects($this->classname);
   }
 
 }

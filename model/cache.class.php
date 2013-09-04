@@ -11,36 +11,51 @@ class Cache
 
   static $store_registered;
 
+  static function connection($connection)
+  {
+    self::$memcache = $connection;
+  }
+
   static function preload($keys)
   {
-    foreach ($keys as $id => $key) {
-      if (isset(self::$cache[$key])) {
-        unset($keys[$id]);
-      }
-    }
+    $keys = array_unique($keys);
+    $keys = array_filter($keys, function($key) { return !Cache::loaded($key); });
 
     if (empty($keys)) {
       return;
     }
 
     if (self::$memcache) {
-      $values = self::$memcache->get($keys);
-      if (is_array($values)) {
-        foreach ($values as $key => $value) {
-          self::$cache[$key] = $value;
+      $keys = array_values($keys);
+      # error_log("cache_preload:" . $keys[0] . " & " . (count($keys) - 1)  . " others");
+      foreach (array_chunk($keys, 10000) as $keys_chunk) {
+        $values = self::$memcache->get($keys_chunk);
+        if (is_array($values)) {
+          foreach ($values as $key => $value) {
+            self::$cache[$key] = $value;
+          }
         }
       }
     }
   }
 
-  static function get($key)
+  static function loaded($key)
   {
-    if (array_key_exists($key, self::$cache)) {
+    return isset(self::$cache[$key]) || array_key_exists($key, self::$cache);
+  }
+
+  static function get($key, $direct = false)
+  {
+    if (isset(self::$cache[$key]) || array_key_exists($key, self::$cache)) {
       return self::$cache[$key];
     }
 
+    if ($direct) {
+      return;
+    }
+
     if (self::$memcache) {
-      error_log("cache_get:$key");
+      # error_log("cache_get:$key");
       return self::$cache[$key] = self::$memcache->get($key);
     }
   }
@@ -49,22 +64,13 @@ class Cache
   {
     self::$set[$key] = [$value, $expire];
     self::$cache[$key] = $value;
-
     self::store_register();
-    return;
-
-    /*
-    if (self::$memcache) {
-      error_log("cache_set:$key");
-      return self::$memcache->set($key, $value, false, $expire);
-    }
-    */
   }
 
   static function delete($key)
   {
     if (self::$memcache) {
-      error_log("cache_delete:$key");
+      # error_log("cache_delete:$key");
       return self::$memcache->delete($key, 0);
     }
   }
@@ -81,8 +87,8 @@ class Cache
   {
     foreach (self::$set as $key => $_set) {
       list($value, $expire) = $_set;
-      error_log("cache_set:$key");
-      self::$memcache->set($key, $value, false, $expire);
+      # error_log("cache_set:$key");
+      self::$memcache->set($key, $value, MEMCACHE_COMPRESSED, $expire);
     }
     self::$set = [];
   }
