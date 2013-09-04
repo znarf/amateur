@@ -160,6 +160,15 @@ class Query
     return $query;
   }
 
+  function count()
+  {
+    $this->type = self::SELECT;
+    $this->columns = 'COUNT(*) as count';
+    $result = $this->execute();
+    $row = Db::fetch_assoc($result);
+    return (int)$row['count'];
+  }
+
   function execute()
   {
     return Db::execute($this->build());
