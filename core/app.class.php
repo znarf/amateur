@@ -78,7 +78,7 @@ class App
     else {
       $this->models[$name] = $model = include $this->filename('model', $name);
       # If no model returned (object or callable), we guess the classname and instanciate it
-      if (!$model) {
+      if (!is_object($model) && !is_callable($model)) {
         $classname = ucfirst($name);
         $this->models[$name] = $model = new $classname();
       }
