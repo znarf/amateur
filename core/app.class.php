@@ -1,6 +1,4 @@
-<?php
-
-namespace Amateur\Core;
+<?php namespace Amateur\Core;
 
 class App
 {
@@ -50,7 +48,7 @@ class App
     $app = $this;
     $req = $this->request();
     $res = $this->response();
-    if (array_key_exists($name, $this->modules)) {
+    if (isset($this->modules[$name]) || array_key_exists($name, $this->modules)) {
       $module = $this->modules[$name];
       return $module($req, $res);
     }
@@ -69,12 +67,12 @@ class App
 
   function model($name)
   {
-    if (is_array($name)) {
+    if ($name === (array)$name) {
       $_models = [];
       foreach ($name as $_name) $_models[] = $this->model($_name);
       return $_models;
     }
-    if (array_key_exists($name, $this->models)) {
+    if (isset($this->models[$name]) || array_key_exists($name, $this->models)) {
       $model = $this->models[$name];
     }
     else {
@@ -94,12 +92,12 @@ class App
 
   function helper($name)
   {
-    if (is_array($name)) {
+    if ($name === (array)$name) {
       $_helpers = [];
       foreach ($name as $_name) $_helpers[] = $this->helper($_name);
       return $_helpers;
     }
-    if (array_key_exists($name, $this->helpers)) {
+    if (isset($this->helpers[$name]) || array_key_exists($name, $this->helpers)) {
       $helper = $this->helpers[$name];
     }
     else {

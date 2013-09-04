@@ -1,6 +1,4 @@
-<?php
-
-namespace Amateur\Core;
+<?php namespace Amateur\Core;
 
 class Response
 {
