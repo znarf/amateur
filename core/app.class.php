@@ -116,16 +116,16 @@ class App
     if (is_callable($args)) {
       return $this->views[$name] = $args;
     }
-    # Start Template
-    ob_start();
     # Function view
     if (array_key_exists($name, $this->views)) {
+      ob_start();
       $this->views[$name]($args);
       return ob_get_clean();
     }
     # Include view
     $template =  $this->filename('view', $name);
     if (file_exists($template)) {
+      ob_start();
       extract($args);
       include $template;
       return ob_get_clean();
