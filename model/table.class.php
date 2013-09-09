@@ -11,6 +11,8 @@ class Table
 
   public $unique_indexes = [];
 
+  public $default_limit = 1000;
+
   function primary()
   {
     if (!$this->primary) {
@@ -26,6 +28,7 @@ class Table
 
   function preload($key, $ids)
   {
+    $ids = array_filter($ids, function($id) { return is_int($id) || is_string($id); });
     $cache_keys = array_map(function($id) use($key) { return $this->cache_key($key, $id); }, $ids);
     Cache::preload($cache_keys);
   }
@@ -100,6 +103,71 @@ class Table
     else {
       return $this->get_one($key, $arg);
     }
+  }
+
+  function count($key, $value)
+  {
+    # From Cache
+    $use_cache = in_array($key, $this->collection_indexes);
+    if ($use_cache) {
+      $cache_key = $this->cache_key($key, $value, 'count');
+      $from_cache = Cache::get($cache_key);
+      if (is_integer($from_cache)) {
+        return $from_cache;
+      }
+    }
+    # From Db
+    $where = [$key => $value];
+    $count = $this->where($where)->count();
+    # Update Cache
+    if ($use_cache) {
+      Cache::set($cache_key, $count);
+    }
+    # Return
+    return $count;
+  }
+
+  function ids($field, $key, $value, $offset = 0, $limit = -1)
+  {
+    # Query limit and offset can differ later from asked one
+    $query_offset = $offset;
+    $query_limit  = $limit;
+    # From Cache
+    $use_cache = in_array($key, $this->collection_indexes);
+    if ($use_cache) {
+      $cache_key = $this->cache_key($key, $value, 'ids');
+      # If 0 results, nothing to query
+      $count = $this->count($key, $value);
+      if ($count == 0) {
+        return [];
+      }
+      # If we have all results with default_limit
+      # (given that there is less results than default_limit)
+      # Or we have enough results with default_limit
+      # (given that the max_offset (offset + limit) fits in default_limit)
+      # Then we use 'soft offset/limit' with default values, and use cache
+      if ($count <= $this->default_limit || $limit && ($offset + $limit) <= $this->default_limit) {
+        $soft_offset_limit = true;
+        $query_offset = 0;
+        $query_limit = $this->default_limit;
+        $ids = Cache::get($cache_key);
+      }
+    }
+    # From Db
+    if (!isset($ids) || !is_array($ids)) {
+      $where = [$key => $value];
+      $ids = $this->where($where)->offset($query_offset)->limit($query_limit)->fetch_ids($field);
+      # Only store default query
+      if ($use_cache && $query_offset == 0 && $query_limit == $this->default_limit) {
+        Cache::set($cache_key, $ids);
+      }
+    }
+    # Soft Offset/Limit
+    if (isset($soft_offset_limit)) {
+      $ids = array_slice($ids, $offset, $limit > 0 ? $limit : null);
+    }
+    # Return
+    return $ids;
   }
 
   function insert($set)
