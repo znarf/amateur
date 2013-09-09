@@ -209,6 +209,13 @@ class Query
     return $result ? Db::fetch_ids($result, $key) : [];
   }
 
+  function fetch_key_values($key, $value)
+  {
+    $this->type = self::SELECT;
+    $result = $this->execute();
+    return $result ? Db::fetch_key_values($result, $key, $value) : [];
+  }
+
   function __toString()
   {
     return $this->build();

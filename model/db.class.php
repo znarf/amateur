@@ -92,4 +92,11 @@ class Db
     return $ids;
   }
 
+  static function fetch_key_values($result, $key, $value)
+  {
+    $results = [];
+    while ($row = $result->fetch(PDO::FETCH_ASSOC)) $results[$row[$key]] = $row[$value];
+    return $results;
+  }
+
 }
