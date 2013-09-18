@@ -1,9 +1,13 @@
-<?php namespace Amateur\Model;
+<?php namespace amateur\model;
 
-class Cache
+use memcache;
+
+class cache
 {
 
   static $memcache;
+
+  static $params = [];
 
   static $cache = [];
 
@@ -11,26 +15,34 @@ class Cache
 
   static $store_registered;
 
-  static function connection($connection)
+  static function connection($connection = null)
   {
-    self::$memcache = $connection;
+    if ($connection) {
+      self::$memcache = $connection;
+    }
+    if (self::$memcache) {
+      return self::$memcache;
+    }
+    $memcache = new memcache;
+    $memcache->addServer(self::$params['host'], 11211, true);
+    return self::$memcache = $memcache;
   }
 
   static function preload($keys)
   {
-    $keys = array_unique($keys);
-    $keys = array_filter($keys, function($key) { return !Cache::loaded($key); });
+    $keys = array_filter(array_unique($keys), function($key) { return !self::loaded($key); });
 
     if (empty($keys)) {
       return;
     }
 
-    if (self::$memcache) {
+    if ($memcache = self::connection()) {
       $keys = array_values($keys);
-      # error_log("cache_preload:" . $keys[0] . " & " . (count($keys) - 1)  . " others");
+      # error_log("cache_preload:" . $keys[0] . " & " . count($keys)  . " total");
       foreach (array_chunk($keys, 10000) as $keys_chunk) {
         $values = self::$memcache->get($keys_chunk);
         if (is_array($values)) {
+          # error_log("cache_preload:" . count($values)  . " found");
           foreach ($values as $key => $value) {
             self::$cache[$key] = $value;
           }
@@ -54,9 +66,9 @@ class Cache
       return;
     }
 
-    if (self::$memcache) {
+    if ($memcache = self::connection()) {
       # error_log("cache_get:$key");
-      return self::$cache[$key] = self::$memcache->get($key);
+      return self::$cache[$key] = $memcache->get($key);
     }
   }
 
@@ -64,31 +76,29 @@ class Cache
   {
     self::$set[$key] = [$value, $expire];
     self::$cache[$key] = $value;
-    self::store_register();
+    # Register storage
+    if (!self::$store_registered) {
+      register_shutdown_function(['\amateur\model\cache', 'store']);
+      self::$store_registered = true;
+    }
   }
 
   static function delete($key)
   {
-    if (self::$memcache) {
+    if ($memcache = self::connection()) {
       # error_log("cache_delete:$key");
-      return self::$memcache->delete($key, 0);
-    }
-  }
-
-  public static function store_register()
-  {
-    if (!self::$store_registered) {
-      register_shutdown_function(['\Amateur\Model\Cache', 'store']);
-      self::$store_registered = true;
+      return $memcache->delete($key, 0);
     }
   }
 
   public static function store()
   {
+    $memcache = self::connection();
     foreach (self::$set as $key => $_set) {
       list($value, $expire) = $_set;
       # error_log("cache_set:$key");
-      self::$memcache->set($key, $value, MEMCACHE_COMPRESSED, $expire);
+      $compressed = is_bool($value) || is_int($value) ? false : MEMCACHE_COMPRESSED;
+      $memcache->set($key, $value, $compressed, $expire);
     }
     self::$set = [];
   }

@@ -1,10 +1,10 @@
-<?php namespace Amateur\Model;
+<?php namespace amateur\model;
 
-use PDO;
+use pdo;
 
-use HttpException;
+use http_exception;
 
-class Db
+class db
 {
 
   static $params;
@@ -21,7 +21,7 @@ class Db
     if (!self::$connection) {
       $params = self::params();
       $dsn = 'mysql:dbname=' . $params['name'] . ';host=' . $params['host'];
-      self::$connection = new PDO($dsn, $params['username'], $params['password']);
+      self::$connection = new pdo($dsn, $params['username'], $params['password']);
     }
     return self::$connection;
   }
@@ -33,7 +33,7 @@ class Db
     $result = $connection->query($query);
     if (!$result) {
       $error = $connection->errorInfo();
-      throw new HttpException($error[2], 500);
+      throw new http_exception($error[2], 500);
     }
     return $result;
   }
@@ -65,7 +65,7 @@ class Db
 
   static function fetch_assoc($result)
   {
-    return $result->fetch(PDO::FETCH_ASSOC);
+    return $result->fetch(pdo::FETCH_ASSOC);
   }
 
   static function fetch_all($result)
@@ -73,29 +73,17 @@ class Db
     return $result->fetchAll();
   }
 
-  static function fetch_object($result, $classname = '\Amateur\Model\Ressource')
-  {
-    return $result->fetchObject($classname);
-  }
-
-  static function fetch_objects($result, $classname = '\Amateur\Model\Ressource')
-  {
-    $objects = [];
-    while ($object = $result->fetchObject($classname)) $objects[] = $object;
-    return $objects;
-  }
-
   static function fetch_ids($result, $key = 'id')
   {
     $ids = [];
-    while ($row = $result->fetch(PDO::FETCH_ASSOC)) $ids[] = (int)$row[$key];
+    while ($row = $result->fetch(pdo::FETCH_ASSOC)) $ids[] = (int)$row[$key];
     return $ids;
   }
 
   static function fetch_key_values($result, $key, $value)
   {
     $results = [];
-    while ($row = $result->fetch(PDO::FETCH_ASSOC)) $results[$row[$key]] = $row[$value];
+    while ($row = $result->fetch(pdo::FETCH_ASSOC)) $results[$row[$key]] = $row[$value];
     return $results;
   }
 

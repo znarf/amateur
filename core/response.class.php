@@ -1,12 +1,7 @@
-<?php namespace Amateur\Core;
+<?php namespace amateur\core;
 
-class Response
+class response
 {
-
-  function app()
-  {
-    return core('app');
-  }
 
   function status($code)
   {
@@ -20,7 +15,7 @@ class Response
 
   function redirect($path, $permanent = false)
   {
-    $url = strpos($path, '://') !== false ? $path : $this->app()->path() . $path;
+    $url = strpos($path, '://') !== false ? $path : core('app')->path() . $path;
     $this->status($permanent ? 301 : 302);
     $this->set_header('Location', $url);
     exit;
@@ -28,7 +23,7 @@ class Response
 
   function render($name, $args = [])
   {
-    $app = $this->app();
+    $app = core('app');
     $app->layout($app->view($name, $args));
     exit;
   }

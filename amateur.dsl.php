@@ -1,105 +1,113 @@
 <?php
 
-defined('amateur_dir') || define('amateur_dir', __DIR__);
+defined('amateur_dir') || define('amateur_dir', __dir__);
 
-require_once amateur_dir . '/core/core.functions.php';
+use
+amateur\core\app,
+amateur\core\core,
+amateur\core\request,
+amateur\core\response;
 
-# Core Objects
+require_once amateur_dir . '/core/closure.functions.php';
+require_once amateur_dir . '/core/replaceable.functions.php';
 
-$app = core('app');
+# Autoload
 
-$request = $app->request();
+spl_autoload_register(function($classname) {
+  $classname = ltrim($classname, '\\');
+  if (strpos($classname, 'amateur\\') === 0) {
+    $dir = dirname(amateur_dir) . DIRECTORY_SEPARATOR;
+    $filename = $dir . str_replace('\\', DIRECTORY_SEPARATOR, $classname) . '.class.php';
+    if (file_exists($filename)) {
+      require $filename;
+    }
+  }
+});
 
-$response = $app->response();
+# Core
+
+function core($name, $value = null) { return core::instance($name, $value); }
 
 # App
 
-function app() { global $app; return $app; }
+if (empty(core::$app)) {
+  core::$app = new app;
+}
 
-function start($dir = null) { global $app; return $app->start($dir); }
+function app() { return core::$app; }
 
-function module($name, $callable = null) { global $app; return $app->module($name, $callable); }
+function start() { return replaceable_call('start', func_get_args(), [core::$app, 'start']); }
 
-function helper($name) { global $app; return $app->helper($name); }
+function module() { return replaceable_call('module', func_get_args(), [core::$app, 'module']); }
 
-function model($name) { global $app; return $app->model($name); }
+function helper() { return replaceable_call('helper', func_get_args(), [core::$app, 'helper']); }
 
-function view($name, $args = []) { global $app; return $app->view($name, $args); }
+function model() { return replaceable_call('model', func_get_args(), [core::$app, 'model']); }
 
-function layout($content = '', $name = 'default') { global $app; return $app->layout($content, $name); }
+function view() { return replaceable_call('view', func_get_args(), [core::$app, 'view']); }
+
+function layout() { return replaceable_call('layout', func_get_args(), [core::$app, 'layout']); }
+
+function error() { return replaceable_call('error', func_get_args(), [core::$app, 'error']); }
 
 # Request
 
-function request() { global $request; return $request; }
+if (empty(core::$request)) {
+  core::$request = new request;
+}
 
-function url($value = null) { global $request; return $request->url($value); }
+function request() { return core::$request; }
 
-function url_is($str) { global $request; return $request->url_is($str); }
+# Url
 
-function url_start_with($str) { global $request; return $request->url_start_with($str); }
+function url() { return replaceable_call('url', func_get_args(), [core::$request, 'url']); }
 
-function url_match($route) { global $request; return $request->url_match($route); }
+function url_is() { return replaceable_call('url_is', func_get_args(), [core::$request, 'url_is']); }
 
-function set_param($name, $value) { global $request; return $request->param($name, $value); }
+function url_match() { return replaceable_call('url_match', func_get_args(), [core::$request, 'url_match']); }
 
-function has_param($name) { global $request; return $request->param($name) ? true : false; }
+function url_start_with() { return replaceable_call('url_start_with', func_get_args(), [core::$request, 'url_start_with']); }
 
-function get_param($name, $default = null) { global $request; $value = $request->param($name); return isset($value) ? $value : $default; }
+# Params
 
-function get_int($name, $default = null) { global $request; $value = $request->param($name); return isset($value) ? (int)$value : $default; }
+function has_param() { return replaceable_call('has_param', func_get_args(), [core::$request, 'has_param']); }
 
-function get_bool($name, $default = null) { global $request; $value = $request->param($name); return isset($value) ? $request->boolise($value) : $default; }
+function get_param() { return replaceable_call('get_param', func_get_args(), [core::$request, 'get_param']); }
 
-function request_host() { global $request; return $request->host(); }
+function get_int() { return replaceable_call('get_int', func_get_args(), [core::$request, 'get_int']); }
 
-function request_method() { global $request; return $request->method(); }
+function get_bool() { return replaceable_call('get_bool', func_get_args(), [core::$request, 'get_bool']); }
 
-function request_header($name) { global $request; return $request->header($name); }
+function set_param() { return replaceable_call('set_param', func_get_args(), [core::$request, 'set_param']); }
 
-function request_url() { global $request; return $request->url(); }
+# Methods
 
-function is_get() { global $request; return $request->method() == 'GET'; }
+function is_get() { return replaceable_call('is_get', func_get_args(), [core::$request, 'is_get']); }
 
-function is_post() { global $request; return $request->method() == 'POST'; }
+function is_post() { return replaceable_call('is_post', func_get_args(), [core::$request, 'is_post']); }
 
-function is_put() { global $request; return $request->method() == 'PUT'; }
+function is_put() { return replaceable_call('is_put', func_get_args(), [core::$request, 'is_put']); }
 
-function is_delete() { global $request; return $request->method() == 'DELETE'; }
+function is_delete() { return replaceable_call('is_delete', func_get_args(), [core::$request, 'is_delete']); }
 
-function is_ajax() { global $request; return $request->header('X-Requested-With') == 'XMLHttpRequest'; }
+function is_write() { return replaceable_call('is_write', func_get_args(), [core::$request, 'is_write']); }
 
-function is_write() { global $request; return in_array($request->method(), ['POST', 'PATCH', 'PUT', 'DELETE']); }
+function check_method() { return replaceable_call('check_method', func_get_args(), [core::$request, 'check_method']); }
 
-function check_method($methods) { global $request; return $request->check_method($methods); }
-
-function check_parameters($parameters) { global $request; return $request->check_parameters($parameters); }
-
-function referer() { global $request; return (string)$request->header('Referer'); }
+function check_parameters() { return replaceable_call('check_parameters', func_get_args(), [core::$request, 'check_parameters']); }
 
 # Response
 
-function response() { global $response; return $response; }
+if (empty(core::$response)) {
+  core::$response = new response;
+}
 
-function status($code) { global $response; return $response->status($code); }
+function response() { return core::$response; }
 
-function set_header($name, $value) { global $response; return $response->set_header($name, $value); }
+function status() { return replaceable_call('status', func_get_args(), [core::$response, 'status']); }
 
-function render($name, $args = []) { global $response; return $response->render($name, $args); }
+function set_header() { return replaceable_call('set_header', func_get_args(), [core::$response, 'set_header']); }
 
-function redirect($path, $permanent = false) { global $response; return $response->redirect($path, $permanent); }
+function render() { return replaceable_call('render', func_get_args(), [core::$response, 'render']); }
 
-# Errors
-
-function error($code = 500, $message = 'Application Error') { global $app; return $app->error($code, $message); }
-
-function not_found($message = 'Not Found') { global $app; return $app->error(404, $message); }
-
-function unknown_url() { global $app, $request; return $app->error(404, sprintf("No url match '%s'.", $request->url())); }
-
-# Mixed
-
-function current_url() { global $app, $request; return $request->protocol() . '://' . $request->host() . $app->path() . $request->url(); }
-
-function relative_url($path = '') { global $app, $request; return $app->path() . $path; }
-
-function absolute_url($path = '') { global $app, $request; return $request->protocol() . '://' . $request->host() . $app->path() . $path; }
+function redirect() { return replaceable_call('redirect', func_get_args(), [core::$response, 'redirect']); }

@@ -1,6 +1,6 @@
-<?php namespace Amateur\Model;
+<?php namespace amateur\model;
 
-class Query
+class query
 {
 
   public $table;
@@ -23,13 +23,13 @@ class Query
 
   public $offset;
 
-  const SELECT = 'SELECT';
+  const select = 'select';
 
-  const INSERT = 'INSERT';
+  const insert = 'insert';
 
-  const UPDATE = 'UPDATE';
+  const update = 'update';
 
-  const DELETE = 'DELETE';
+  const delete = 'delete';
 
   function __construct($table = null)
   {
@@ -38,26 +38,26 @@ class Query
 
   function select($columns = null)
   {
-    $this->type = self::SELECT;
+    $this->type = self::select;
     $this->columns = $columns;
     return $this;
   }
 
   function insert()
   {
-    $this->type = self::INSERT;
+    $this->type = self::insert;
     return $this;
   }
 
   function update()
   {
-    $this->type = self::UPDATE;
+    $this->type = self::update;
     return $this;
   }
 
   function delete()
   {
-    $this->type = self::DELETE;
+    $this->type = self::delete;
     return $this;
   }
 
@@ -126,10 +126,10 @@ class Query
     $table = $this->build_args($this->table);
     $colums = empty($this->columns) ? '*' : $this->build_args($this->columns);
     switch ($this->type) {
-      case self::SELECT: return "SELECT {$colums} FROM {$table}";
-      case self::INSERT: return "INSERT INTO {$table}";
-      case self::UPDATE: return "UPDATE {$table}";
-      case self::DELETE: return "DELETE FROM {$table}";
+      case self::select: return "SELECT {$colums} FROM {$table}";
+      case self::insert: return "INSERT INTO {$table}";
+      case self::update: return "UPDATE {$table}";
+      case self::delete: return "DELETE FROM {$table}";
     }
   }
 
@@ -160,65 +160,61 @@ class Query
     return $query;
   }
 
-  function count()
+  function count($where = null)
   {
-    $this->type = self::SELECT;
+    if ($where) {
+      $this->where = $where;
+    }
+    $this->type = self::select;
     $this->columns = 'COUNT(*) as count';
     $result = $this->execute();
-    $row = Db::fetch_assoc($result);
+    $row = db::fetch_assoc($result);
     return (int)$row['count'];
   }
 
   function execute()
   {
-    return Db::execute($this->build());
+    return db::execute($this->build());
   }
 
   function fetch_one()
   {
-    $this->type = self::SELECT;
+    $this->type = self::select;
     $result = $this->limit(1)->execute();
-    return $result ? Db::fetch_assoc($result) : null;
+    return $result ? db::fetch_assoc($result) : null;
   }
 
   function fetch_all()
   {
-    $this->type = self::SELECT;
+    $this->type = self::select;
     $result = $this->execute();
-    return $result ? Db::fetch_all($result) : [];
-  }
-
-  function fetch_object($classname = 'Ressource')
-  {
-    $this->type = self::SELECT;
-    $result = $this->limit(1)->execute();
-    return $result ? Db::fetch_object($result, $classname) : null;
-  }
-
-  function fetch_objects($classname = 'Ressource')
-  {
-    $this->type = self::SELECT;
-    $result = $this->execute();
-    return $result ? Db::fetch_objects($result, $classname) : [];
+    return $result ? db::fetch_all($result) : [];
   }
 
   function fetch_ids($key = 'id')
   {
-    $this->type = self::SELECT;
+    $this->type = self::select;
     $result = $this->execute();
-    return $result ? Db::fetch_ids($result, $key) : [];
+    return $result ? db::fetch_ids($result, $key) : [];
   }
 
   function fetch_key_values($key, $value)
   {
-    $this->type = self::SELECT;
+    $this->type = self::select;
     $result = $this->execute();
-    return $result ? Db::fetch_key_values($result, $key, $value) : [];
+    return $result ? db::fetch_key_values($result, $key, $value) : [];
   }
+
+  # Magic Methods
 
   function __toString()
   {
     return $this->build();
+  }
+
+  function __invoke()
+  {
+    return $this->execute();
   }
 
   # Static Methods
@@ -232,7 +228,7 @@ class Query
     if (is_int($arg) || $arg === 'NULL' || $arg === 'NOT NULL') {
       return $arg;
     } else {
-      return Db::quote($arg);
+      return db::quote($arg);
     }
   }
 

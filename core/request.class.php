@@ -1,16 +1,11 @@
-<?php namespace Amateur\Core;
+<?php namespace amateur\core;
 
-class Request
+class request
 {
 
   public $url;
 
   public $headers = [];
-
-  function app()
-  {
-    return core('app');
-  }
 
   function url($value = null)
   {
@@ -19,7 +14,7 @@ class Request
     }
     elseif (!isset($this->url)) {
       $request_uri = strtok($_SERVER['REQUEST_URI'], '?');
-      $this->url = str_replace($this->app()->path(), '', $request_uri);
+      $this->url = str_replace(core('app')->path(), '', $request_uri);
     }
     return $this->url;
   }
@@ -60,6 +55,59 @@ class Request
     else {
       return (bool)$value;
     }
+  }
+
+  function set_param($name, $value)
+  {
+    return $this->param($name, $value);
+  }
+
+  function has_param($name)
+  {
+    return $this->param($name) ? true : false;
+  }
+
+  function get_param($name, $default = null)
+  {
+    $value = $this->param($name);
+    return isset($value) ? $value : $default;
+  }
+
+  function get_int($name, $default = null)
+  {
+    $value = $this->param($name);
+    return isset($value) ? (int)$value : $default;
+  }
+
+  function get_bool($name, $default = null)
+  {
+    $value = $this->param($name);
+    return isset($value) ? $this->boolise($value) : $default;
+  }
+
+  function is_get()
+  {
+    return $this->method() == 'GET';
+  }
+
+  function is_post()
+  {
+    return $this->method() == 'POST';
+  }
+
+  function is_put()
+  {
+    return $this->method() == 'PUT';
+  }
+
+  function is_delete()
+  {
+    return $this->method() == 'DELETE';
+  }
+
+  function is_write()
+  {
+    return in_array($this->method(), ['POST', 'PATCH', 'PUT', 'DELETE']);
   }
 
   function header($name)

@@ -1,9 +1,9 @@
-<?php namespace Amateur\Model;
+<?php namespace amateur\model;
 
-class Ressource
+class ressource
 {
 
-  protected $_attributes;
+  public $attributes;
 
   function __construct($attributes = [])
   {
@@ -14,7 +14,7 @@ class Ressource
 
   function set_attributes($attributes = [])
   {
-    $this->_attributes = $attributes;
+    $this->attributes = $attributes;
     foreach ($attributes as $key => $value) {
       $this->$key = $value;
     }
@@ -22,19 +22,19 @@ class Ressource
 
   function attribute($name)
   {
-    if (isset($this->_attributes[$name])) return $this->_attributes[$name];
+    if (isset($this->attributes[$name])) return $this->attributes[$name];
   }
 
 }
 
-trait Dynamize
+trait dynamic_properties
 {
 
   protected static $methods;
 
   function set_attributes($attributes = [])
   {
-    $this->_attributes = $attributes;
+    $this->attributes = $attributes;
     # Store class methods
     if (!isset(static::$methods)) static::$methods = array_flip(get_class_methods($this));
     # Set properties that don't have a method named the same
@@ -53,6 +53,22 @@ trait Dynamize
   {
     $this->$name = $this->$name();
     return isset($this->$name);
+  }
+
+}
+
+trait other_tables
+{
+
+  static $namespace;
+
+  function table($name)
+  {
+    if (!isset(static::$namespace)) {
+      $class = get_class($this);
+      static::$namespace = substr($class, 0, strrpos($class, '\\'));
+    }
+    return table::instance($name, static::$namespace);
   }
 
 }

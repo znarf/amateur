@@ -1,13 +1,17 @@
-<?php namespace Amateur\Model;
+<?php namespace amateur\model;
 
-class Table
+use exception;
+
+class table
 {
 
-  public $primary;
+  public $namespace;
 
   public $classname;
 
   public $tablename;
+
+  public $primary;
 
   public $unique_indexes = [];
 
@@ -16,7 +20,7 @@ class Table
   function primary()
   {
     if (!$this->primary) {
-      throw Exception("No primary set for '{$this->tablename}'");
+      throw new exception("No primary set for '{$this->tablename}'");
     }
     return $this->primary;
   }
@@ -30,18 +34,24 @@ class Table
   {
     $ids = array_filter($ids, function($id) { return is_int($id) || is_string($id); });
     $cache_keys = array_map(function($id) use($key) { return $this->cache_key($key, $id); }, $ids);
-    Cache::preload($cache_keys);
+    cache::preload($cache_keys);
   }
+
+  public $objects = [];
 
   function get_one($key, $value)
   {
+    # From local
+    if (isset($this->objects[$key][$value])) {
+      return $this->objects[$key][$value];
+    }
     # From Cache
     $use_cache = in_array($key, $this->unique_indexes);
     if ($use_cache) {
       $cache_key = $this->cache_key($key, $value);
-      $row = Cache::get($cache_key);
+      $row = cache::get($cache_key);
       if (is_array($row)) {
-        return new $this->classname($row);
+        return $this->objects[$key][$value] = $this->to_object($row);
       }
       elseif ($row === 0) {
         return null;
@@ -50,10 +60,10 @@ class Table
     # From DB
     $row = $this->fetch_one([$key => $value]);
     if ($use_cache) {
-      Cache::set($cache_key, $row ? $row : 0);
+      cache::set($cache_key, $row ? $row : 0);
     }
     if ($row) {
-      return new $this->classname($row);
+      return $this->objects[$key][$value] = $this->to_object($row);
     }
   }
 
@@ -66,9 +76,9 @@ class Table
       foreach ($values as $i => $value) {
         $objects[$value] = null;
         # For now, we assume preloading
-        $row = Cache::get($this->cache_key($key, $value), true);
+        $row = cache::get($this->cache_key($key, $value), true);
         if (is_array($row)) {
-          $objects[$value] = new $this->classname($row);
+          $objects[$value] = $this->objects[$key][$value] = $this->to_object($row);
           unset($values[$i]);
         }
         elseif ($row === 0) {
@@ -84,9 +94,9 @@ class Table
         foreach ($rows as $row) {
           $value = $row[$key];
           if ($use_cache) {
-            Cache::set($this->cache_key($key, $value), $row ? $row : 0);
+            cache::set($this->cache_key($key, $value), $row ? $row : 0);
           }
-          $objects[$value] = new $this->classname($row);
+          $objects[$value] = $this->objects[$key][$value] = $this->to_object($row);
         }
       }
     }
@@ -111,17 +121,17 @@ class Table
     $use_cache = in_array($key, $this->collection_indexes);
     if ($use_cache) {
       $cache_key = $this->cache_key($key, $value, 'count');
-      $from_cache = Cache::get($cache_key);
+      $from_cache = cache::get($cache_key);
       if (is_integer($from_cache)) {
         return $from_cache;
       }
     }
     # From Db
     $where = [$key => $value];
-    $count = $this->where($where)->count();
+    $count = $this->count($where);
     # Update Cache
     if ($use_cache) {
-      Cache::set($cache_key, $count);
+      cache::set($cache_key, $count);
     }
     # Return
     return $count;
@@ -150,7 +160,7 @@ class Table
         $soft_offset_limit = true;
         $query_offset = 0;
         $query_limit = $this->default_limit;
-        $ids = Cache::get($cache_key);
+        $ids = cache::get($cache_key);
       }
     }
     # From Db
@@ -159,7 +169,7 @@ class Table
       $ids = $this->where($where)->offset($query_offset)->limit($query_limit)->fetch_ids($field);
       # Only store default query
       if ($use_cache && $query_offset == 0 && $query_limit == $this->default_limit) {
-        Cache::set($cache_key, $ids);
+        cache::set($cache_key, $ids);
       }
     }
     # Soft Offset/Limit
@@ -178,7 +188,7 @@ class Table
   function create($set)
   {
     $this->insert($set);
-    return $this->get(core('db')->insert_id());
+    return $this->get(db::insert_id());
   }
 
   function update($where, $set)
@@ -196,7 +206,7 @@ class Table
       $row = $this->fetch_one($where);
       foreach ($this->unique_indexes as $key) {
         $cache_key = $this->cache_key($key, $row[$key]);
-        Cache::set($cache_key, $row);
+        cache::set($cache_key, $row);
       }
       return new $this->classname($row);
     }
@@ -216,21 +226,30 @@ class Table
     if (isset($ressource)) {
       foreach ($this->unique_indexes as $key) {
         $cache_key = $this->cache_key($key, $ressource->$key);
-        Cache::delete($cache_key);
+        cache::delete($cache_key);
       }
     }
   }
 
+  function to_object($row)
+  {
+    if (!isset($this->namespace)) {
+      $this->namespace = $this->current_namespace();
+    }
+    $classname = $this->namespace ? $this->namespace . '\\' .  $this->classname : $this->classname;
+    return new $classname($row);
+  }
+
   function to_objects($rows)
   {
-    return array_map(function($row) { return new $this->classname($row); }, $rows);
+    return array_map([$this, 'to_object'], $rows);
   }
 
   # Query
 
   function query()
   {
-    return new Query($this->tablename);
+    return new query($this->tablename);
   }
 
   function select($columns = null)
@@ -255,12 +274,58 @@ class Table
 
   function fetch_object($where = [])
   {
-    return $this->where($where)->fetch_object($this->classname);
+    $row = $this->where($where)->fetch_one();
+    return $this->to_object($row);
   }
 
   function fetch_objects($where = [])
   {
-    return $this->where($where)->fetch_objects($this->classname);
+    $rows = $this->where($where)->fetch_all();
+    return $this->to_objects($rows);
+  }
+
+  # Registry
+
+  static $instances = [];
+
+  static function instance($name, $ns = null, $direct = false)
+  {
+    $classname = $ns ? $ns . '\\' . $name : $name;
+    if (isset(self::$instances[$classname])) {
+      return self::$instances[$classname];
+    }
+    # Direct
+    if ($direct) {
+      return;
+    }
+    # Let autoload do its magic
+    if (class_exists($classname)) {
+      return self::$instances[$classname] = new $classname;
+    }
+    throw new exception("Can't instanciate table '{$classname}'.");
+  }
+
+  function table($name)
+  {
+    if (!isset($this->namespace)) {
+      $this->namespace = $this->current_namespace();
+    }
+    return table::instance($name, $this->namespace);
+  }
+
+  # Temporary
+
+  function current_namespace()
+  {
+    $class = get_class($this);
+    return substr($class, 0, strrpos($class, '\\'));
+  }
+
+  # Experimental
+
+  function __invoke($name = null)
+  {
+    return $name ? $this->instance($name) : $this;
   }
 
 }
