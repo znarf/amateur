@@ -153,13 +153,6 @@ class app
   function layout($content = '', $name = 'default')
   {
     include $this->filename('layout', $name);
-    # Finish Request
-    if (function_exists('fastcgi_finish_request')) {
-      fastcgi_finish_request();
-    }
-    else {
-      flush();
-    }
   }
 
   function start($dir = null)
@@ -181,6 +174,16 @@ class app
     catch (exception $e) {
       ob_end_clean();
       $this->error(500, $e->getMessage(), $e->getTraceAsString());
+    }
+  }
+
+  function end()
+  {
+    if (function_exists('fastcgi_finish_request')) {
+      fastcgi_finish_request();
+    }
+    else {
+      flush();
     }
   }
 
