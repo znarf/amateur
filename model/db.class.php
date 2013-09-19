@@ -29,7 +29,7 @@ class db
   static function execute($query)
   {
     # error_log($query);
-    $connection = self::connection();
+    $connection = self::$connection ? self::$connection : self::connection();
     $result = $connection->query($query);
     if (!$result) {
       $error = $connection->errorInfo();
@@ -40,21 +40,19 @@ class db
 
   static function insert_id()
   {
-    $connection = self::connection();
+    $connection = self::$connection ? self::$connection : self::connection();
     return $connection->lastInsertId();
   }
 
   static function quote($arg)
   {
-    $connection = self::connection();
+    $connection = self::$connection ? self::$connection : self::connection();
     return $connection->quote($arg);
   }
 
-  # Static Methods
-
-  static function date($str, $format = 'Y-m-d H:i:s')
+  static function date($time, $format = 'Y-m-d H:i:s')
   {
-    $timestamp  = strtotime($str);
+    $timestamp = strtotime($time);
     return date($format, $timestamp);
   }
 
@@ -75,15 +73,17 @@ class db
 
   static function fetch_ids($result, $key = 'id')
   {
+    $rows = $result->fetchAll();
     $ids = [];
-    while ($row = $result->fetch(pdo::FETCH_ASSOC)) $ids[] = (int)$row[$key];
+    foreach ($rows as $row) $results[] = (int)$row[$key];
     return $ids;
   }
 
   static function fetch_key_values($result, $key, $value)
   {
+    $rows = $result->fetchAll();
     $results = [];
-    while ($row = $result->fetch(pdo::FETCH_ASSOC)) $results[$row[$key]] = $row[$value];
+    foreach ($rows as $row) $results[$row[$key]] = $row[$value];
     return $results;
   }
 

@@ -221,15 +221,20 @@ class query
 
   static function quote($arg)
   {
-    if ($arg === (array)$arg) {
-      return array_map(['self', 'quote'], $arg);
-    }
+    return $arg === (array)$arg ? self::multi_quote($arg) : self::single_quote($arg);
+  }
 
-    if (is_int($arg) || $arg === 'NULL' || $arg === 'NOT NULL') {
+  static function multi_quote($arg)
+  {
+    return array_map(['self', 'single_quote'], $arg);
+  }
+
+  static function single_quote($arg)
+  {
+    if ($arg === (int)$arg || $arg === 'NULL' || $arg === 'NOT NULL') {
       return $arg;
-    } else {
-      return db::quote($arg);
     }
+    return db::quote($arg);
   }
 
   static function build_args($args)
@@ -241,13 +246,13 @@ class query
   {
     $_where = [];
     foreach ($where as $key => $value) {
-      $value = self::quote($value);
-      if (is_array($value)) {
+      if ($value === (array)$value) {
+        $value = self::multi_quote($value);
         $_where[] = $key . ' IN (' . implode(',', $value) . ')';
       } elseif ($value === 'NULL' || $value === 'NOT NULL') {
-        $_where[] = $key . ' IS ' . $value;
+        $_where[] = $key . ' IS ' . self::single_quote($value);
       } else {
-        $_where[] = $key . ' = ' . $value;
+        $_where[] = $key . ' = ' . self::single_quote($value);
       }
     }
     return implode(' AND ', $_where);
@@ -257,7 +262,7 @@ class query
   {
     $_set = [];
     foreach ($set as $key => $value) {
-      $_set[] = $key . ' = ' . self::quote($value);
+      $_set[] = $key . ' = ' . self::single_quote($value);
     }
     return implode(', ', $_set);
   }

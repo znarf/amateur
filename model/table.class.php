@@ -17,6 +17,8 @@ class table
 
   public $default_limit = 1000;
 
+  public $objects = [];
+
   function primary()
   {
     if (!$this->primary) {
@@ -36,8 +38,6 @@ class table
     $cache_keys = array_map(function($id) use($key) { return $this->cache_key($key, $id); }, $ids);
     cache::preload($cache_keys);
   }
-
-  public $objects = [];
 
   function get_one($key, $value)
   {
@@ -208,7 +208,7 @@ class table
         $cache_key = $this->cache_key($key, $row[$key]);
         cache::set($cache_key, $row);
       }
-      return new $this->classname($row);
+      return $this->to_object($row);
     }
   }
 
@@ -325,7 +325,7 @@ class table
 
   function __invoke($name = null)
   {
-    return $name ? $this->instance($name) : $this;
+    return $name ? $this->table($name) : $this;
   }
 
 }
