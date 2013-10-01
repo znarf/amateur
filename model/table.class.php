@@ -257,6 +257,11 @@ class table
     return $this->query()->select($columns);
   }
 
+  function insert($columns = null)
+  {
+    return $this->query()->insert($columns);
+  }
+
   function where($where)
   {
     return $this->query()->where($where);

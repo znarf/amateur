@@ -13,6 +13,8 @@ class query
 
   public $set;
 
+  public $values = [];
+
   public $group_by;
 
   public $having;
@@ -39,13 +41,18 @@ class query
   function select($columns = null)
   {
     $this->type = self::select;
-    $this->columns = $columns;
+    if ($columns) {
+      $this->columns = $columns;
+    }
     return $this;
   }
 
-  function insert()
+  function insert($columns = null)
   {
     $this->type = self::insert;
+    if ($columns) {
+      $this->columns = $columns;
+    }
     return $this;
   }
 
@@ -70,6 +77,12 @@ class query
   function set($set)
   {
     $this->set = $set;
+    return $this;
+  }
+
+  function values($values)
+  {
+    $this->values[] = $values;
     return $this;
   }
 
@@ -124,12 +137,17 @@ class query
   function prologue()
   {
     $table = $this->build_args($this->table);
-    $colums = empty($this->columns) ? '*' : $this->build_args($this->columns);
     switch ($this->type) {
-      case self::select: return "SELECT {$colums} FROM {$table}";
-      case self::insert: return "INSERT INTO {$table}";
-      case self::update: return "UPDATE {$table}";
-      case self::delete: return "DELETE FROM {$table}";
+      case self::select:
+        $colums = empty($this->columns) ? '*' : $this->build_args($this->columns);
+        return "SELECT {$colums} FROM {$table}";
+      case self::insert:
+        $colums = empty($this->columns) ? '' : ' (' . $this->build_args($this->columns) . ')';
+        return "INSERT INTO {$table}{$colums}";
+      case self::update:
+        return "UPDATE {$table}";
+      case self::delete:
+        return "DELETE FROM {$table}";
     }
   }
 
@@ -138,6 +156,10 @@ class query
     $query  = '/* Amateur Query */ ' . $this->prologue();
     if ($this->set) {
       $query .= ' SET ' . (is_array($this->set) ? $this->build_set($this->set) : $this->set);
+    }
+    if ($this->values) {
+      $_values = array_map(function($values) { return '(' . $this->build_values($values) . ')'; }, $this->values);
+      $query .= ' VALUES ' . "\n" . implode(",\n", $_values);
     }
     if ($this->where) {
       $query .= ' WHERE ' . (is_array($this->where) ? $this->build_where($this->where) : $this->where);
@@ -265,6 +287,15 @@ class query
       $_set[] = $key . ' = ' . self::single_quote($value);
     }
     return implode(', ', $_set);
+  }
+
+  static function build_values($values)
+  {
+    $_values = [];
+    foreach ($values as $value) {
+      $_values[] = self::single_quote($value);
+    }
+    return implode(', ', $_values);
   }
 
 }
