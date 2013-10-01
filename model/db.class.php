@@ -75,7 +75,7 @@ class db
   {
     $rows = $result->fetchAll();
     $ids = [];
-    foreach ($rows as $row) $results[] = (int)$row[$key];
+    foreach ($rows as $row) $ids[] = (int)$row[$key];
     return $ids;
   }
 
