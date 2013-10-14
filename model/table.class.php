@@ -130,7 +130,7 @@ class table
     }
     # From Db
     $where = [$key => $value];
-    $count = $this->count($where);
+    $count = $this->query()->count($where);
     # Update Cache
     if ($use_cache) {
       cache::set($cache_key, $count);
