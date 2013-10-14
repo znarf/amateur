@@ -15,6 +15,8 @@ class table
 
   public $unique_indexes = [];
 
+  public $collection_indexes = [];
+
   public $default_limit = 1000;
 
   public $objects = [];
@@ -180,15 +182,19 @@ class table
     return $ids;
   }
 
-  function insert($set)
-  {
-    return $this->query()->insert()->set($set)->execute();
-  }
-
   function create($set)
   {
-    $this->insert($set);
-    return $this->get(db::insert_id());
+    $this->insert()->set($set)->execute();
+    # Get from Db
+    $where = [$this->primary() => db::insert_id()];
+    $row = $this->fetch_one($where);
+    # Update cache
+    foreach ($this->unique_indexes as $key) {
+      $cache_key = $this->cache_key($key, $row[$key]);
+      cache::set($cache_key, $row);
+    }
+    # Return object
+    return $this->to_object($row);
   }
 
   function update($where, $set)
