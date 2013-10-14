@@ -1,0 +1,21 @@
+{
+    "name": "znarf/amateur",
+    "type": "library",
+    "description": "Amateur",
+    "homepage": "https://bitbucket.org/znarf/amateur",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "François Hodierne",
+            "email": "francois@hodierne.net",
+            "homepage": "http://francois.hodierne.net/",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0"
+    },
+    "autoload": {
+        "classmap": ["core", "model"]
+    }
+}

@@ -11,19 +11,6 @@ amateur\core\response;
 require_once amateur_dir . '/core/closure.functions.php';
 require_once amateur_dir . '/core/replaceable.functions.php';
 
-# Autoload
-
-spl_autoload_register(function($classname) {
-  $classname = ltrim($classname, '\\');
-  if (strpos($classname, 'amateur\\') === 0) {
-    $dir = dirname(amateur_dir) . DIRECTORY_SEPARATOR;
-    $filename = $dir . str_replace('\\', DIRECTORY_SEPARATOR, $classname) . '.class.php';
-    if (file_exists($filename)) {
-      require $filename;
-    }
-  }
-});
-
 # Core
 
 function core($name, $value = null) { return core::instance($name, $value); }
