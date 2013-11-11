@@ -316,6 +316,11 @@ class table
     throw new exception("Can't instanciate table '{$classname}'.");
   }
 
+  static function flush()
+  {
+    foreach (self::$instances as $instance) $instance->objects = [];
+  }
+
   function table($name)
   {
     if (!isset($this->namespace)) {

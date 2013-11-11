@@ -157,8 +157,6 @@ class app
 
   function start($dir = null)
   {
-    # Autoload
-    $this->register_autoload();
     # Start
     $app = $this;
     $req = $this->request();
@@ -186,6 +184,8 @@ class app
       flush();
     }
   }
+
+  # Autoload
 
   function register_autoload()
   {

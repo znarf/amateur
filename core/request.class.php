@@ -21,7 +21,7 @@ class request
 
   function method()
   {
-    return isset($_REQUEST['forceMethod']) ? $_REQUEST['forceMethod'] : $_SERVER['REQUEST_METHOD'];
+    return isset($_REQUEST['force_method']) ? $_REQUEST['force_method'] : $_SERVER['REQUEST_METHOD'];
   }
 
   function host()

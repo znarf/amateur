@@ -103,4 +103,9 @@ class cache
     self::$set = [];
   }
 
+  static function flush()
+  {
+    self::$cache = [];
+  }
+
 }

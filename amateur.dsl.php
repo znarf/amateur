@@ -2,6 +2,8 @@
 
 defined('amateur_dir') || define('amateur_dir', __dir__);
 
+# Namespace
+
 use
 amateur\core\app,
 amateur\core\core,
