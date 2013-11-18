@@ -148,11 +148,13 @@ class app
     }
   }
 
-  # Layouts
+  # Layout
 
-  function layout($content = '', $name = 'default')
+  public $default_layout = 'default';
+
+  function layout($content = '', $name = null)
   {
-    include $this->filename('layout', $name);
+    include $this->filename('layout', $name ? $name : $this->default_layout);
   }
 
   function start($dir = null)
