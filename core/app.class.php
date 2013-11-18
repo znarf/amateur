@@ -189,6 +189,15 @@ class app
 
   # Autoload
 
+  function load_functions()
+  {
+    foreach (new \DirectoryIterator($this->dir . '/functions') as $file) {
+      if ($file->isFile()) {
+        require_once $file->getPathName();
+      }
+    }
+  }
+
   function register_autoload()
   {
     spl_autoload_register(function($classname) {
