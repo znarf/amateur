@@ -291,7 +291,7 @@ class table
   function fetch_object($where = [])
   {
     $row = $this->where($where)->fetch_one();
-    return $this->to_object($row);
+    return $row ? $this->to_object($row) : null;
   }
 
   function fetch_objects($where = [])
