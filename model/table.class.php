@@ -11,7 +11,7 @@ class table
 
   public $tablename;
 
-  public $primary;
+  public $primary = 'id';
 
   public $unique_indexes = [];
 
