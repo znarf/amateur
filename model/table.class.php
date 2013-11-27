@@ -242,7 +242,12 @@ class table
     if (!isset($this->namespace)) {
       $this->namespace = $this->current_namespace();
     }
-    $classname = $this->namespace ? $this->namespace . '\\' .  $this->classname : $this->classname;
+    if ($this->classname) {
+      $classname = $this->namespace ? $this->namespace . '\\' .  $this->classname : $this->classname;
+    }
+    else {
+      $classname = '\amateur\model\ressource';
+    }
     return new $classname($row);
   }
 
@@ -313,7 +318,12 @@ class table
     if (class_exists($classname)) {
       return self::$instances[$classname] = new $classname;
     }
-    throw new exception("Can't instanciate table '{$classname}'.");
+    # Default
+    else {
+      $instance = new table;
+      $instance->tablename = $name;
+      return self::$instances[$classname] = $instance;
+    }
   }
 
   static function flush()
