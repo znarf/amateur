@@ -41,9 +41,7 @@ class query
   function select($columns = null)
   {
     $this->type = self::select;
-    if ($columns) {
-      $this->columns = $columns;
-    }
+    $this->columns = $columns;
     return $this;
   }
 
