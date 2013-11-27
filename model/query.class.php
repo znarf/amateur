@@ -253,6 +253,9 @@ class query
 
   static function single_quote($arg)
   {
+    if ($arg === null) {
+      return 'NULL';
+    }
     if ($arg === (int)$arg || $arg === 'NULL' || $arg === 'NOT NULL') {
       return $arg;
     }
