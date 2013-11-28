@@ -19,9 +19,13 @@ class db
   static function connection()
   {
     if (!self::$connection) {
+      $options = [];
       $params = self::params();
+      if (isset($params['charset'])) {
+        $options[pdo::MYSQL_ATTR_INIT_COMMAND] = "SET NAMES " . $params['charset'];
+      }
       $dsn = 'mysql:dbname=' . $params['name'] . ';host=' . $params['host'];
-      self::$connection = new pdo($dsn, $params['username'], $params['password']);
+      self::$connection = new pdo($dsn, $params['username'], $params['password'], $options);
     }
     return self::$connection;
   }
