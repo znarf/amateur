@@ -28,16 +28,6 @@ class app
     return isset($value) ? $this->namespace = $value : $this->namespace;
   }
 
-  function request()
-  {
-    return core('request');
-  }
-
-  function response()
-  {
-    return core('response');
-  }
-
   # Files
 
   function filename($type, $name)
@@ -57,8 +47,8 @@ class app
       return $this->modules[$name] = $callable;
     }
     $app = $this;
-    $req = $this->request();
-    $res = $this->response();
+    $req = request();
+    $res = response();
     if (isset($this->modules[$name]) || array_key_exists($name, $this->modules)) {
       $module = $this->modules[$name];
       return $module($req, $res);
@@ -161,19 +151,19 @@ class app
   {
     # Start
     $app = $this;
-    $req = $this->request();
-    $res = $this->response();
+    $req = request();
+    $res = response();
     try {
       $start = include $this->dir($dir) . '/app.start.php';
       if (is_callable($start)) $start($req, $res);
     }
     catch (http_exception $e) {
       ob_end_clean();
-      $this->error($e->getCode(), $e->getMessage(), $e->getTraceAsString());
+      error($e->getCode(), $e->getMessage(), $e->getTraceAsString());
     }
     catch (exception $e) {
       ob_end_clean();
-      $this->error(500, $e->getMessage(), $e->getTraceAsString());
+      error(500, $e->getMessage(), $e->getTraceAsString());
     }
   }
 
@@ -216,12 +206,12 @@ class app
 
   function error($code = 500, $message = 'Application Error', $trace = '')
   {
-    $this->response()->status($code);
+    response()->status($code);
     # Try error views
     foreach ([$code, 'error'] as $view) {
-      if ($result = $this->view($view, compact('code', 'message', 'trace'))) break;
+      if ($result = view($view, compact('code', 'message', 'trace'))) break;
     }
-    $this->layout( isset($result) ? $result : "<h2>{$code} {$message}</h2>" . "<pre>{$trace}</pre>" );
+    layout( isset($result) ? $result : "<h2>{$code} {$message}</h2>" . "<pre>{$trace}</pre>" );
   }
 
 }
