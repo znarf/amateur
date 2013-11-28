@@ -204,7 +204,8 @@ class app
       # Remove leading \ if any
       $classname = ltrim($classname, '\\');
       # Then if class match namespace\type\name pattern
-      if (preg_match("/{$this->namespace}\\\([^\\\]+)\\\([^\\\]+)/", $classname, $matches)) {
+      $namespace = preg_quote($this->namespace);
+      if (preg_match("/{$namespace}\\\([^\\\]+)\\\([^\\\]+)/", $classname, $matches)) {
         $filename = $this->filename($matches[1], $matches[2]);
         if (file_exists($filename)) {
           require $filename;
