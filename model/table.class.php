@@ -13,7 +13,7 @@ class table
 
   public $primary = 'id';
 
-  public $unique_indexes = [];
+  public $unique_indexes = ['id'];
 
   public $collection_indexes = [];
 
