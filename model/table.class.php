@@ -304,15 +304,16 @@ class table
 
   static $instances = [];
 
-  static function instance($name, $ns = null, $direct = false)
+  static function instance($name = null, $ns = null)
   {
-    $classname = $ns ? $ns . '\\' . $name : $name;
+    if ($name) {
+      $classname = $ns ? $ns . '\\' . $name : $name;
+    }
+    else {
+      $classname = get_called_class();
+    }
     if (isset(self::$instances[$classname])) {
       return self::$instances[$classname];
-    }
-    # Direct
-    if ($direct) {
-      return;
     }
     # Let autoload do its magic
     if (class_exists($classname)) {
