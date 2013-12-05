@@ -40,7 +40,7 @@ class cache
       $keys = array_values($keys);
       # error_log("cache_preload:" . $keys[0] . " & " . count($keys)  . " total");
       foreach (array_chunk($keys, 10000) as $keys_chunk) {
-        $values = self::$memcache->get($keys_chunk);
+        $values = $memcache->get($keys_chunk);
         if (is_array($values)) {
           # error_log("cache_preload:" . count($values)  . " found");
           foreach ($values as $key => $value) {
