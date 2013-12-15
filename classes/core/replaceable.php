@@ -5,7 +5,12 @@ class replaceable
 
   static $replaceables = [];
 
-  static function load($dir)
+  static function instance()
+  {
+    return registry::instance('core', 'replaceable', __class__);
+  }
+
+  public function load($dir)
   {
     foreach (new \DirectoryIterator($dir) as $file) {
       if ($file->isDir() && !$file->isDot()) {

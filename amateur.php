@@ -9,4 +9,4 @@ if (!class_exists('\amateur\core\loader')) {
 }
 
 # Replaceables
-\amateur\core\replaceable::load(amateur_dir . '/replaceables');
+\amateur\core\replaceable::instance()->load(amateur_dir . '/replaceables');

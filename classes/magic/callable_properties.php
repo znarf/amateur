@@ -25,9 +25,7 @@ trait callable_properties
   public function __set($name, $value)
   {
     if (is_callable($value)) {
-      # $this->methods[$name] = $value
-      $this->methods[$name] = $value->bindTo(null, get_class());
-      # $this->methods[$name] = $value->bindTo($this, get_class());
+      $this->methods[$name] = $value->bindTo($this, get_class());
     }
     else {
       $this->$name = $value;
