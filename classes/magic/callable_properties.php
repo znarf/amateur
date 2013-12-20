@@ -19,7 +19,7 @@ trait callable_properties
       }
       return call_user_func_array($callable, $args);
     }
-    throw \BadMethodCallException('Unknown method/property.');
+    throw new \BadMethodCallException('Unknown method/property.');
   }
 
   public function __set($name, $value)
