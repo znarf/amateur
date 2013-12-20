@@ -35,7 +35,7 @@ class db
     $result = $connection->query($query);
     if (!$result) {
       $error = $connection->errorInfo();
-      throw http_error(500, $error[2]);
+      throw \amateur\core\exception($error[2], 500);
     }
     return $result;
   }
