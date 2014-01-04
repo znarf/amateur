@@ -1,9 +1,9 @@
 <?php
 
 return function($value = null) {
-  static $code;
+  static $content;
   if ($value) {
-    $code = $value;
+    $content = $value;
   }
-  return $code;
+  return $content;
 };

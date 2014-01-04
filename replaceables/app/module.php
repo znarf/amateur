@@ -3,21 +3,20 @@
 return function($name, $callable = null) {
   # Registry
   static $modules = [];
-  # Set
+  # Store Module (not null and callable)
   if (isset($callable) && is_callable($callable)) {
     return $modules[$name] = $callable;
   }
-  # Loaded
-  if (isset($modules[$name]) || array_key_exists($name, $modules)) {
+  # Stored Module
+  if (isset($modules[$name])) {
     $module = $modules[$name];
     return $module();
   }
-  # Load
-  else {
-    $module = include filename('module', $name);
-    if (is_callable($module)) {
-      $modules[$name] = $module;
-      return $module();
-    }
+  # Execute Module ...
+  # ... or return a callable to be stored and executed
+  $module = default_module($name);
+  if (is_callable($module)) {
+    $modules[$name] = $module;
+    return $module();
   }
 };

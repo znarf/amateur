@@ -28,8 +28,10 @@ class replaceable
   static function set($name, $replaceable)
   {
     # No replaceable with this name exists
-    if (!function_exists($name)) {
-      eval('function ' . $name . '() { return ' . __class__ . '::call("' . $name . '", func_get_args()); }');
+    if (empty(self::$replaceables[$name])) {
+      if (!function_exists($name)) {
+        eval('function ' . $name . '() { return ' . __class__ . '::call("' . $name . '", func_get_args()); }');
+      }
     }
     return self::$replaceables[$name] = $replaceable;
   }
@@ -43,14 +45,12 @@ class replaceable
       throw new exception("Unknown replaceable ($name).", 500);
     }
     if (!$args) {
-      return $callable();
+      return is_callable($callable) ? $callable() : $callable;
     }
     switch (count($args)) {
       case 1: return $callable($args[0]);
       case 2: return $callable($args[0], $args[1]);
       case 3: return $callable($args[0], $args[1], $args[2]);
-      case 4: return $callable($args[0], $args[1], $args[2], $args[3]);
-      case 5: return $callable($args[0], $args[1], $args[2], $args[3], $args[4]);
     }
     return call_user_func_array($callable, $args);
   }

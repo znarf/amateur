@@ -1,5 +1,5 @@
 <?php
 
-return function($text) {
-  return htmlspecialchars($text, ENT_QUOTES | ENT_HTML5);
+return function($string) {
+  return htmlspecialchars($string, ENT_QUOTES | ENT_HTML5);
 };

@@ -1,6 +1,6 @@
 <?php namespace amateur\core;
 
-class exception extends \Exception
+class exception extends \exception
 {
 
 }

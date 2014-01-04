@@ -3,22 +3,16 @@
 return function($name, $args = []) {
   # Registry
   static $views = [];
-  # Set view
-  if (is_callable($args)) {
+  # Store View (not an array and callable)
+  if ($args !== (array)$args && is_callable($args)) {
     return $views[$name] = $args;
   }
-  # Function view
-  if (isset($views[$name]) || array_key_exists($name, $views)) {
+  # Stored View
+  if (isset($views[$name])) {
     ob_start();
     $views[$name]($args);
-    return ob_get_clean();
+    return response_content(ob_get_clean());
   }
-  # Include view
-  $template = filename('view', $name);
-  if (file_exists($template)) {
-    ob_start();
-    extract($args);
-    include $template;
-    return ob_get_clean();
-  }
+  # Default view
+  return default_view($name, $args);
 };

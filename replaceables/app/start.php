@@ -1,9 +1,13 @@
 <?php
 
-return function() {
+return function($callable = null) {
+  # Store
+  if ($callable) {
+    action('start', $callable);
+  }
+  # Execute amd catch exceptions
   try {
-    $start = include app_dir() . '/app.start.php';
-    if (is_callable($start)) $start();
+    action('start');
   }
   catch (\amateur\core\exception $e) {
     ob_end_clean();

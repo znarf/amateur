@@ -7,7 +7,7 @@ return function($name) {
   }
   # Default
   $instance = function() use ($name) {
-    return include filename('model', $name);
+    return default_model($name);
   };
   # Registry
   return registry('model', $name, $instance);

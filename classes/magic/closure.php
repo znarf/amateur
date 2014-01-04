@@ -28,8 +28,6 @@ class closure
       case 1:  return $object->$method($args[0]);
       case 2:  return $object->$method($args[0], $args[1]);
       case 3:  return $object->$method($args[0], $args[1], $args[2]);
-      case 4:  return $object->$method($args[0], $args[1], $args[2], $args[3]);
-      case 5:  return $object->$method($args[0], $args[1], $args[2], $args[3], $args[4]);
       default: return call_user_func_array([$object, $method], $args);
     }
   }
