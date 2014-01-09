@@ -21,6 +21,13 @@ class table
 
   public $objects = [];
 
+  function __construct($tablename = null)
+  {
+    if ($tablename) {
+      $this->tablename = $tablename;
+    }
+  }
+
   function primary()
   {
     if (!$this->primary) {
