@@ -1,7 +1,5 @@
 <?php namespace amateur\model;
 
-use memcache;
-
 class cache
 {
 
@@ -15,6 +13,11 @@ class cache
 
   static $store_registered;
 
+  static function params($params = null)
+  {
+    return $params ? self::$params = $params : self::$params;
+  }
+
   static function connection($connection = null)
   {
     if ($connection) {
@@ -23,7 +26,10 @@ class cache
     if (self::$memcache) {
       return self::$memcache;
     }
-    $memcache = new memcache;
+    if (!class_exists('\memcache') || !self::$params) {
+      return;
+    }
+    $memcache = new \memcache;
     $memcache->addServer(self::$params['host'], 11211, true);
     return self::$memcache = $memcache;
   }
@@ -93,14 +99,15 @@ class cache
 
   public static function store()
   {
-    $memcache = self::connection();
-    foreach (self::$set as $key => $_set) {
-      list($value, $expire) = $_set;
-      # error_log("cache_set:$key");
-      $compressed = is_bool($value) || is_int($value) ? false : MEMCACHE_COMPRESSED;
-      $memcache->set($key, $value, $compressed, $expire);
+    if ($memcache = self::connection()) {
+      foreach (self::$set as $key => $_set) {
+        list($value, $expire) = $_set;
+        # error_log("cache_set:$key");
+        $compressed = is_bool($value) || is_int($value) ? false : MEMCACHE_COMPRESSED;
+        $memcache->set($key, $value, $compressed, $expire);
+      }
+      self::$set = [];
     }
-    self::$set = [];
   }
 
   static function flush()
