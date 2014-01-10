@@ -1,7 +1,5 @@
 <?php namespace amateur\model;
 
-use exception;
-
 class table
 {
 

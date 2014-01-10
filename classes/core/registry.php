@@ -20,7 +20,7 @@ class registry
       return self::$instances[$type][$name] = new $instance;
     }
     else {
-       throw \Exception("Unknown instance ({$type}/{$name}.");
+       throw new exception("Unknown instance ({$type}/{$name}.");
      }
   }
 
