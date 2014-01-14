@@ -25,6 +25,16 @@ class replaceable
     }
   }
 
+  static function get($name)
+  {
+    if ($name === (array)$name) {
+      return array_map(['self', 'get'], $name);
+    }
+    if (isset(self::$replaceables[$name])) {
+      return self::$replaceables[$name];
+    }
+  }
+
   static function set($name, $replaceable)
   {
     # No replaceable with this name exists
