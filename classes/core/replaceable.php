@@ -65,9 +65,4 @@ class replaceable
     return call_user_func_array($callable, $args);
   }
 
-  static function __callStatic($name, $args)
-  {
-    return self::call($name, $args);
-  }
-
 }
