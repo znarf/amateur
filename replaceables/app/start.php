@@ -5,7 +5,7 @@ return function($callable = null) {
   if ($callable) {
     action('start', $callable);
   }
-  # Execute amd catch exceptions
+  # Execute and catch exceptions
   try {
     action('start');
   }
