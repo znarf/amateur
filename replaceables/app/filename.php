@@ -2,9 +2,12 @@
 
 return function($type, $name) {
   $base_dir = app_dir();
-  $base_paths = [$base_dir, $base_dir . "/{$type}s"];
-  foreach ($base_paths as $base_path) {
-    $filename = $base_path . "/{$name}.{$type}.php";
+  $filenames = [
+    "{$base_dir}/{$name}.{$type}.php",
+    "{$base_dir}/{$type}s/{$name}.{$type}.php",
+    "{$base_dir}/{$type}s/{$name}.php"
+  ];
+  foreach ($filenames as $filename) {
     if (file_exists($filename)) {
       return $filename;
     }
