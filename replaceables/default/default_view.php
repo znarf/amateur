@@ -7,4 +7,5 @@ return function($name, $args = []) {
     include $filename;
     return response_content(ob_get_clean());
   }
+  throw http_error(500, "Unknown view ($name).");
 };
