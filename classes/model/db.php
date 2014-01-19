@@ -1,7 +1,5 @@
 <?php namespace amateur\model;
 
-use pdo;
-
 class db
 {
 
@@ -20,10 +18,10 @@ class db
       $options = [];
       $params = self::params();
       if (isset($params['charset'])) {
-        $options[pdo::MYSQL_ATTR_INIT_COMMAND] = "SET NAMES " . $params['charset'];
+        $options[\pdo::MYSQL_ATTR_INIT_COMMAND] = "SET NAMES " . $params['charset'];
       }
       $dsn = 'mysql:dbname=' . $params['name'] . ';host=' . $params['host'];
-      self::$connection = new pdo($dsn, $params['username'], $params['password'], $options);
+      self::$connection = new \pdo($dsn, $params['username'], $params['password'], $options);
     }
     return self::$connection;
   }
@@ -65,7 +63,7 @@ class db
 
   static function fetch_assoc($result)
   {
-    return $result->fetch(pdo::FETCH_ASSOC);
+    return $result->fetch(\pdo::FETCH_ASSOC);
   }
 
   static function fetch_all($result)
