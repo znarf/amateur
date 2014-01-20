@@ -24,7 +24,7 @@ trait callable_properties
 
   public function __set($name, $value)
   {
-    if (is_callable($value)) {
+    if ($value instanceof \closure) {
       $this->methods[$name] = $value->bindTo($this, get_class());
     }
     else {
