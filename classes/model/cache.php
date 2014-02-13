@@ -15,7 +15,7 @@ class cache
 
   static function params($params = null)
   {
-    return $params ? self::$params = $params : self::$params;
+    return $params ? self::$params = $params + ['port' => 11211] : self::$params;
   }
 
   static function connection($connection = null)
@@ -30,7 +30,7 @@ class cache
       return;
     }
     $memcache = new \memcache;
-    $memcache->addServer(self::$params['host'], 11211, true);
+    $memcache->addServer(self::$params['host'], self::$params['port']);
     return self::$memcache = $memcache;
   }
 
@@ -46,7 +46,8 @@ class cache
       $keys = array_values($keys);
       # error_log("cache_preload:" . $keys[0] . " & " . count($keys)  . " total");
       foreach (array_chunk($keys, 10000) as $keys_chunk) {
-        $values = $memcache->get($keys_chunk);
+        $get = $memcache instanceof \memcached ? 'getMulti' : 'get';
+        $values = $memcache->$get($keys_chunk);
         if (is_array($values)) {
           # error_log("cache_preload:" . count($values)  . " found");
           foreach ($values as $key => $value) {
@@ -93,7 +94,7 @@ class cache
   {
     if ($memcache = self::connection()) {
       # error_log("cache_delete:$key");
-      return $memcache->delete($key, 0);
+      return $memcache->delete($key);
     }
   }
 
@@ -103,8 +104,13 @@ class cache
       foreach (self::$set as $key => $_set) {
         list($value, $expire) = $_set;
         # error_log("cache_set:$key");
-        $compressed = is_bool($value) || is_int($value) ? false : MEMCACHE_COMPRESSED;
-        $memcache->set($key, $value, $compressed, $expire);
+        if ($memcache instanceof \memcached) {
+          $memcache->set($key, $value, $expire);
+        }
+        else {
+          $compressed = is_bool($value) || is_int($value) ? false : MEMCACHE_COMPRESSED;
+          $memcache->set($key, $value, $compressed, $expire);
+        }
       }
       self::$set = [];
     }
