@@ -26,10 +26,10 @@ class cache
     if (self::$memcache) {
       return self::$memcache;
     }
-    if (!class_exists('\memcache') || !self::$params) {
+    if (!class_exists('\memcached') || !self::$params) {
       return;
     }
-    $memcache = new \memcache;
+    $memcache = new \memcached;
     $memcache->addServer(self::$params['host'], self::$params['port']);
     return self::$memcache = $memcache;
   }
@@ -46,7 +46,7 @@ class cache
       $keys = array_values($keys);
       # error_log("cache_preload:" . $keys[0] . " & " . count($keys)  . " total");
       foreach (array_chunk($keys, 10000) as $keys_chunk) {
-        $get = $memcache instanceof \memcached ? 'getMulti' : 'get';
+        $get = $memcache instanceof \memcache ? 'get' : 'getMulti';
         $values = $memcache->$get($keys_chunk);
         if (is_array($values)) {
           # error_log("cache_preload:" . count($values)  . " found");
@@ -104,12 +104,12 @@ class cache
       foreach (self::$set as $key => $_set) {
         list($value, $expire) = $_set;
         # error_log("cache_set:$key");
-        if ($memcache instanceof \memcached) {
-          $memcache->set($key, $value, $expire);
-        }
-        else {
+        if ($memcache instanceof \memcache) {
           $compressed = is_bool($value) || is_int($value) ? false : MEMCACHE_COMPRESSED;
           $memcache->set($key, $value, $compressed, $expire);
+        }
+        else {
+          $memcache->set($key, $value, $expire);
         }
       }
       self::$set = [];
