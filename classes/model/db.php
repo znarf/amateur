@@ -29,6 +29,12 @@ class db
     return self::$connection;
   }
 
+  static function driver()
+  {
+    $connection = self::connection();
+    return $connection->getAttribute(\pdo::ATTR_DRIVER_NAME);
+  }
+
   static function execute($query)
   {
     # error_log($query);
