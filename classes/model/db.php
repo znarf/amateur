@@ -12,8 +12,11 @@ class db
     return $params ? self::$params = $params : self::$params;
   }
 
-  static function connection()
+  static function connection($connection = null)
   {
+    if ($connection) {
+      self::$connection = $connection;
+    }
     if (!self::$connection) {
       $options = [];
       $params = self::params();
