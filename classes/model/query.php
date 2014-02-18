@@ -74,7 +74,14 @@ class query
 
   function set($set)
   {
-    $this->set = $set;
+    # sqlite doesn't support the set syntax for inserts
+    if ($this->type == self::insert && db::driver() == 'sqlite') {
+      $this->columns = array_keys($set);
+      $this->values = [array_values($set)];
+    }
+    else {
+      $this->set = $set;
+    }
     return $this;
   }
 
