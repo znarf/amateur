@@ -30,7 +30,7 @@ class cache
       return;
     }
     $memcache = new \memcached;
-    $memcache->addServer(self::$params['host'], self::$params['port']);
+    $memcache->addServer(self::$params['host'], self::$params['port'], true);
     return self::$memcache = $memcache;
   }
 
