@@ -204,16 +204,16 @@ class table
 
   function update($where, $set)
   {
-    # Ressource given
+    # Resource given
     if (is_object($where)) {
-      $ressource = $where;
+      $resource = $where;
       $key = $this->primary();
-      $where = [$key => $ressource->$key];
+      $where = [$key => $resource->$key];
     }
     # Update Db
     $this->query()->update()->where($where)->set($set)->execute();
-    # Update Cache + Return ressource
-    if (isset($ressource)) {
+    # Update Cache + Return resource
+    if (isset($resource)) {
       $row = $this->fetch_one($where);
       foreach ($this->unique_indexes as $key) {
         $cache_key = $this->cache_key($key, $row[$key]);
@@ -225,18 +225,18 @@ class table
 
   function delete($where)
   {
-    # Ressource given
+    # Resource given
     if (is_object($where)) {
-      $ressource = $where;
+      $resource = $where;
       $key = $this->primary();
-      $where = [$key => $ressource->$key];
+      $where = [$key => $resource->$key];
     }
     # Update Db
     $this->query()->delete()->where($where)->execute();
     # Delete Cache
-    if (isset($ressource)) {
+    if (isset($resource)) {
       foreach ($this->unique_indexes as $key) {
-        $cache_key = $this->cache_key($key, $ressource->$key);
+        $cache_key = $this->cache_key($key, $resource->$key);
         cache::delete($cache_key);
       }
     }
@@ -244,7 +244,7 @@ class table
 
   function to_object($row)
   {
-    $classname = $this->classname ? $this->classname : '\amateur\model\ressource';
+    $classname = $this->classname ?: '\amateur\model\resource';
     return new $classname($row);
   }
 

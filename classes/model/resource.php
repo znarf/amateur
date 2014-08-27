@@ -1,6 +1,6 @@
 <?php namespace amateur\model;
 
-class ressource
+class resource
 {
 
   public $attributes;
