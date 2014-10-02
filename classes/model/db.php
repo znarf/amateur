@@ -38,7 +38,7 @@ class db
   static function execute($query)
   {
     # error_log($query);
-    $connection = self::$connection ? self::$connection : self::connection();
+    $connection = self::$connection ?: self::connection();
     $result = $connection->query($query);
     if (!$result) {
       $error = $connection->errorInfo();
@@ -49,13 +49,13 @@ class db
 
   static function insert_id()
   {
-    $connection = self::$connection ? self::$connection : self::connection();
+    $connection = self::$connection ?: self::connection();
     return $connection->lastInsertId();
   }
 
   static function quote($arg)
   {
-    $connection = self::$connection ? self::$connection : self::connection();
+    $connection = self::$connection ?: self::connection();
     return $connection->quote($arg);
   }
 

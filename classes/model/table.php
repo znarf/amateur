@@ -67,7 +67,7 @@ class table
     # From DB
     $row = $this->fetch_one([$key => $value]);
     if ($use_cache) {
-      cache::set($cache_key, $row ? $row : 0);
+      cache::set($cache_key, $row ?: 0);
     }
     if ($row) {
       return $this->objects[$key][$value] = $this->to_object($row);
@@ -101,7 +101,7 @@ class table
         foreach ($rows as $row) {
           $value = $row[$key];
           if ($use_cache) {
-            cache::set($this->cache_key($key, $value), $row ? $row : 0);
+            cache::set($this->cache_key($key, $value), $row ?: 0);
           }
           $objects[$value] = $this->objects[$key][$value] = $this->to_object($row);
         }
