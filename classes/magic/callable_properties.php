@@ -22,6 +22,13 @@ trait callable_properties
     throw new \BadMethodCallException('Unknown method/property.');
   }
 
+  public function __get($name)
+  {
+    if (isset($this->methods[$name])) {
+      return $this->methods[$name];
+    }
+  }
+
   public function __set($name, $value)
   {
     if ($value instanceof \closure) {
