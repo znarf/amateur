@@ -45,8 +45,14 @@ trait dynamic_properties
 
   function __get($name)
   {
-    # Should we cache or not, shouldn't the decision be done at the apprecation of the dynamic property?
-    return $this->$name = $this->$name();
+    if (method_exists($this, $name)) {
+      # Should we cache or not?
+      # Shouldn't the decision be done at the apprecation of the dynamic property?
+      return $this->$name = $this->$name();
+    }
+    else {
+      error_log("Undefined property ($name).");
+    }
   }
 
   function __isset($name)
