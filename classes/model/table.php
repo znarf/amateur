@@ -285,6 +285,12 @@ class table
     return $this->where($where)->fetch_all();
   }
 
+  function fetch_ids($where = [], $key = null)
+  {
+    $key = $key ?: $this->primary();
+    return $this->where($where)->fetch_ids($key);
+  }
+
   function fetch_object($where = [])
   {
     $row = $this->where($where)->fetch_one();

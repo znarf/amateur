@@ -221,6 +221,7 @@ class query
   function fetch_ids($key = 'id')
   {
     $this->type = self::select;
+    $this->columns = $this->columns ?: $key;
     $result = $this->execute();
     return $result ? db::fetch_ids($result, $key) : [];
   }
