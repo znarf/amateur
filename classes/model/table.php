@@ -191,7 +191,9 @@ class table
   {
     $this->insert()->set($set)->execute();
     # Get from Db
-    $where = [$this->primary() => db::insert_id()];
+    $key = $this->primary();
+    $value = db::insert_id() ?: $set[$key];
+    $where = [$key => $value];
     $row = $this->fetch_one($where);
     # Update cache
     foreach ($this->unique_indexes as $key) {
@@ -208,7 +210,8 @@ class table
     if (is_object($where)) {
       $resource = $where;
       $key = $this->primary();
-      $where = [$key => $resource->$key];
+      $value = $resource->$key;
+      $where = [$key => $value];
     }
     # Update Db
     $this->query()->update()->where($where)->set($set)->execute();
