@@ -270,7 +270,8 @@ class query
 
   static function build_args($args)
   {
-    return implode(', ', (array)$args);
+    $args = array_map(function($arg) { return "`{$arg}`"; }, (array)$args);
+    return implode(', ', $args);
   }
 
   static function build_where($where)
