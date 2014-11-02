@@ -278,6 +278,7 @@ class query
   {
     $_where = [];
     foreach ($where as $key => $value) {
+      $key = "`{$key}`";
       if ($value === (array)$value) {
         $value = self::multi_quote($value);
         $_where[] = $key . ' IN (' . implode(',', $value) . ')';
@@ -294,6 +295,7 @@ class query
   {
     $_set = [];
     foreach ($set as $key => $value) {
+      $key = "`{$key}`";
       $_set[] = $key . ' = ' . self::single_quote($value);
     }
     return implode(', ', $_set);
