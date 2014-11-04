@@ -11,6 +11,8 @@ class table
 
   public $primary = 'id';
 
+  public $primaries = [];
+
   public $unique_indexes = ['id'];
 
   public $collection_indexes = [];
@@ -32,6 +34,11 @@ class table
       throw new exception("No primary set for '{$this->tablename}'");
     }
     return $this->primary;
+  }
+
+  function primaries()
+  {
+    return $this->primaries ?: [$this->primary];
   }
 
   function cache_key($key, $value, $type = 'raw')
@@ -190,10 +197,15 @@ class table
   function create($set)
   {
     $this->insert()->set($set)->execute();
+    # Compute condition to read back from Db
+    $insert_id = db::insert_id();
+    if ($insert_id) {
+      $where = [$this->primary() => $insert_id];
+    }
+    else {
+      $where = array_intersect_key($set, array_flip($this->primaries()));
+    }
     # Get from Db
-    $key = $this->primary();
-    $value = db::insert_id() ?: $set[$key];
-    $where = [$key => $value];
     $row = $this->fetch_one($where);
     # Update cache
     foreach ($this->unique_indexes as $key) {
@@ -204,26 +216,24 @@ class table
     return $this->to_object($row);
   }
 
-  function update($where, $set)
+  function update($where, $set = [])
   {
     # Resource given
     if (is_object($where)) {
       $resource = $where;
-      $key = $this->primary();
-      $value = $resource->$key;
-      $where = [$key => $value];
+      $where = array_intersect_key($resource->attributes, array_flip($this->primaries()));
     }
     # Update Db
     $this->query()->update()->where($where)->set($set)->execute();
-    # Update Cache + Return resource
-    if (isset($resource)) {
-      $row = $this->fetch_one($where);
-      foreach ($this->unique_indexes as $key) {
-        $cache_key = $this->cache_key($key, $row[$key]);
-        cache::set($cache_key, $row);
-      }
-      return $this->to_object($row);
+    # Get from Db
+    $row = $this->fetch_one($where);
+    # Update Cache
+    foreach ($this->unique_indexes as $key) {
+      $cache_key = $this->cache_key($key, $row[$key]);
+      cache::set($cache_key, $row);
     }
+    # Return object
+    return $this->to_object($row);
   }
 
   function delete($where)
@@ -231,17 +241,16 @@ class table
     # Resource given
     if (is_object($where)) {
       $resource = $where;
-      $key = $this->primary();
-      $where = [$key => $resource->$key];
+      $where = array_intersect_key($resource->attributes, array_flip($this->primaries()));
     }
-    # Update Db
+    # Get from Db
+    $row = $this->fetch_one($where);
+    # Delete From Db
     $this->query()->delete()->where($where)->execute();
     # Delete Cache
-    if (isset($resource)) {
-      foreach ($this->unique_indexes as $key) {
-        $cache_key = $this->cache_key($key, $resource->$key);
-        cache::delete($cache_key);
-      }
+    foreach ($this->unique_indexes as $key) {
+      $cache_key = $this->cache_key($key, $row[$key]);
+      cache::delete($cache_key);
     }
   }
 
