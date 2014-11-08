@@ -136,7 +136,7 @@ class table
     if ($use_cache) {
       $cache_key = $this->cache_key($key, $value, 'count');
       $from_cache = cache::get($cache_key);
-      if (is_integer($from_cache)) {
+      if (is_numeric($from_cache)) {
         return $from_cache;
       }
     }
