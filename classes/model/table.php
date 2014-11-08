@@ -226,14 +226,18 @@ class table
     # Update Db
     $this->query()->update()->where($where)->set($set)->execute();
     # Get from Db
-    $row = $this->fetch_one($where);
+    $rows = $this->fetch_all($where);
     # Update Cache
-    foreach ($this->unique_indexes as $key) {
-      $cache_key = $this->cache_key($key, $row[$key]);
-      cache::set($cache_key, $row);
+    foreach ($rows as $row) {
+      foreach ($this->unique_indexes as $key) {
+        $cache_key = $this->cache_key($key, $row[$key]);
+        cache::set($cache_key, $row);
+      }
     }
     # Return object
-    return $this->to_object($row);
+    if (count($rows) == 1) {
+      return $this->to_object($row);
+    }
   }
 
   function delete($where)
