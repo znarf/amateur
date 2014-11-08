@@ -3,7 +3,7 @@
 class query
 {
 
-  public $table;
+  public $tablename;
 
   public $type;
 
@@ -33,9 +33,9 @@ class query
 
   const delete = 'delete';
 
-  function __construct($table = null)
+  function __construct($tablename = null)
   {
-    $this->table = $table;
+    $this->tablename = [$tablename];
   }
 
   function select($columns = null)
@@ -66,9 +66,9 @@ class query
     return $this;
   }
 
-  function from($table)
+  function from($tablename)
   {
-    $this->table = $table;
+    $this->tablename = $tablename;
     return $this;
   }
 
@@ -141,7 +141,7 @@ class query
 
   function prologue()
   {
-    $table = $this->build_args($this->table);
+    $table = $this->build_args($this->tablename);
     switch ($this->type) {
       case self::select:
         $colums = empty($this->columns) ? '*' : $this->build_args($this->columns);
@@ -270,8 +270,11 @@ class query
 
   static function build_args($args)
   {
-    $args = array_map(function($arg) { return "`{$arg}`"; }, (array)$args);
-    return implode(', ', $args);
+    if (is_array($args)) {
+      $args = array_map(function($arg) { return "`{$arg}`"; }, $args);
+      return implode(', ', (array)$args);
+    }
+    return $args;
   }
 
   static function build_where($where)
