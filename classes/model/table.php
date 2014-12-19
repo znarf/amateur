@@ -74,7 +74,8 @@ class table
     # From DB
     $row = $this->fetch_one([$key => $value]);
     if ($use_cache) {
-      cache::set($cache_key, $row ?: 0);
+      $ttl = $row ? 0 : 60;
+      cache::set($cache_key, $row ?: 0, $ttl);
     }
     if ($row) {
       return $this->objects[$key][$value] = $this->to_object($row);
