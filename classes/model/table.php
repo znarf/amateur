@@ -19,6 +19,8 @@ class table
 
   public $default_limit = 1000;
 
+  public $default_ttl = 0;
+
   public $objects = [];
 
   function __construct($tablename = null)
@@ -74,7 +76,7 @@ class table
     # From DB
     $row = $this->fetch_one([$key => $value]);
     if ($use_cache) {
-      $ttl = $row ? 0 : 60;
+      $ttl = $row ? $this->default_ttl : 60;
       cache::set($cache_key, $row ?: 0, $ttl);
     }
     if ($row) {
@@ -109,7 +111,8 @@ class table
         foreach ($rows as $row) {
           $value = $row[$key];
           if ($use_cache) {
-            cache::set($this->cache_key($key, $value), $row ?: 0);
+            $ttl = $row ? $this->default_ttl : 60;
+            cache::set($this->cache_key($key, $value), $row ?: 0, $ttl);
           }
           $objects[$value] = $this->objects[$key][$value] = $this->to_object($row);
         }
@@ -146,7 +149,7 @@ class table
     $count = $this->query()->count($where);
     # Update Cache
     if ($use_cache) {
-      cache::set($cache_key, $count);
+      cache::set($cache_key, $count, $this->default_ttl);
     }
     # Return
     return $count;
@@ -184,7 +187,7 @@ class table
       $ids = $this->where($where)->offset($query_offset)->limit($query_limit)->fetch_ids($field);
       # Only store default query
       if ($use_cache && $query_offset == 0 && $query_limit == $this->default_limit) {
-        cache::set($cache_key, $ids);
+        cache::set($cache_key, $ids, $this->default_ttl);
       }
     }
     # Soft Offset/Limit
@@ -211,7 +214,7 @@ class table
     # Update cache
     foreach ($this->unique_indexes as $key) {
       $cache_key = $this->cache_key($key, $row[$key]);
-      cache::set($cache_key, $row);
+      cache::set($cache_key, $row, $this->default_ttl);
     }
     # Return object
     return $this->to_object($row);
@@ -232,7 +235,7 @@ class table
     foreach ($rows as $row) {
       foreach ($this->unique_indexes as $key) {
         $cache_key = $this->cache_key($key, $row[$key]);
-        cache::set($cache_key, $row);
+        cache::set($cache_key, $row, $this->default_ttl);
       }
     }
     # Return object
