@@ -281,10 +281,13 @@ class query
   {
     $_where = [];
     foreach ($where as $key => $value) {
-      $key = "`{$key}`";
+      # We could do better :-/
+      if (strpos($key, '.') === false) {
+        $key = "`{$key}`";
+      }
       if ($value === (array)$value) {
         $value = self::multi_quote($value);
-        $_where[] = $key . ' IN (' . implode(',', $value) . ')';
+        $_where[] = $key . ' IN (' . implode(', ', $value) . ')';
       } elseif ($value === 'NULL' || $value === 'NOT NULL') {
         $_where[] = $key . ' IS ' . self::single_quote($value);
       } else {
