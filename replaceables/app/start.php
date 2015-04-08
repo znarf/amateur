@@ -1,20 +1,28 @@
 <?php
 
-return function($callable = null) {
+namespace amateur
+{
+
+use amateur\core\amateur;
+
+function start($callable = null)
+{
   # Store
   if ($callable) {
-    action('start', $callable);
+    amateur::action('start', $callable);
   }
   # Execute and catch exceptions
   try {
-    action('start');
+    amateur::action('start');
   }
   catch (\amateur\core\exception $e) {
     ob_end_clean();
-    error($e->getCode(), $e->getMessage(), $e->getTraceAsString());
+    amateur::error($e->getCode(), $e->getMessage(), $e->getTraceAsString());
   }
-  catch (exception $e) {
+  catch (\exception $e) {
     ob_end_clean();
-    error(500, $e->getMessage(), $e->getTraceAsString());
+    amateur::error(500, $e->getMessage(), $e->getTraceAsString());
   }
-};
+}
+
+}

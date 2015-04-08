@@ -10,17 +10,21 @@ class replaceable
     return registry::instance('core', 'replaceable', __class__);
   }
 
-  public function load($dir)
+  public function load($dir, $namespace = null)
   {
     foreach (new \DirectoryIterator($dir) as $file) {
       if ($file->isDir() && !$file->isDot()) {
-        self::load($file->getPathName());
+        self::load($file->getPathName(), $namespace);
       }
       elseif ($file->isFile() && $file->getExtension() == 'php') {
         $name = $file->getBasename('.php');
-        $filename = $file->getPathName();
-        $replaceable = include $filename;
-        self::set($name, $replaceable);
+        $replaceable = include $file->getPathName();
+        if (is_callable($replaceable)) {
+          self::set($name, $replaceable);
+        }
+        else {
+          self::set($name, $namespace ? "\\{$namespace}\\{$name}" : $name);
+        }
       }
     }
   }

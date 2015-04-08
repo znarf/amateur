@@ -1,5 +1,13 @@
 <?php
 
-return function() {
-  return request_method() == 'POST';
-};
+namespace amateur
+{
+
+use amateur\core\amateur;
+
+function is_post()
+{
+  return amateur::request_method() == 'POST';
+}
+
+}

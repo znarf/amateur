@@ -1,5 +1,13 @@
 <?php
 
-return function($path = '') {
-  return app_path() . $path;
-};
+namespace amateur
+{
+
+use amateur\core\amateur;
+
+function relative_url($path = '')
+{
+  return amateur::app_path() . $path;
+}
+
+}

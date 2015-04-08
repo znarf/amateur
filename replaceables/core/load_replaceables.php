@@ -1,5 +1,14 @@
 <?php
 
-return function($dir) {
-  return \amateur\core\replaceable::instance()->load($dir);
-};
+namespace amateur
+{
+
+use amateur\core\replaceable;
+
+function load_replaceables($dir)
+{
+  return replaceable::instance()->load($dir);
+}
+
+}
+

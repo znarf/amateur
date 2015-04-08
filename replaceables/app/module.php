@@ -1,6 +1,12 @@
 <?php
 
-return function($name, $callable = null) {
+namespace amateur
+{
+
+use amateur\core\amateur;
+
+function module($name, $callable = null)
+{
   # Registry
   static $modules = [];
   # Store Module (not null and callable)
@@ -14,9 +20,11 @@ return function($name, $callable = null) {
   }
   # Execute Module ...
   # ... or return a callable to be stored and executed
-  $module = default_module($name);
+  $module = amateur::default_module($name);
   if (is_callable($module)) {
     $modules[$name] = $module;
     return $module();
   }
-};
+}
+
+}

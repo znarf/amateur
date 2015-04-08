@@ -1,8 +1,16 @@
 <?php
 
-return function($path, $permanent = false) {
-  $url = strpos($path, '://') !== false ? $path : app_path() . $path;
-  response_code($permanent ? 301 : 302);
-  response_header('Location', $url);
-  finish();
-};
+namespace amateur
+{
+
+use amateur\core\amateur;
+
+function redirect($path, $permanent = false)
+{
+  $url = strpos($path, '://') !== false ? $path : amateur::app_path() . $path;
+  amateur::response_code($permanent ? 301 : 302);
+  amateur::response_header('Location', $url);
+  amateur::finish();
+}
+
+}

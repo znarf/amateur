@@ -1,5 +1,13 @@
 <?php
 
-return function($name, $value) {
-  return request_param($name, $value);
-};
+namespace amateur
+{
+
+use amateur\core\amateur;
+
+function set_param($name, $value)
+{
+  return amateur::request_param($name, $value);
+}
+
+}

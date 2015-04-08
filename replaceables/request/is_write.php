@@ -1,5 +1,13 @@
 <?php
 
-return function() {
-  return in_array(request_method(), ['POST', 'PATCH', 'PUT', 'DELETE']);
-};
+namespace amateur
+{
+
+use amateur\core\amateur;
+
+function is_write()
+{
+  return in_array(amateur::request_method(), ['POST', 'PATCH', 'PUT', 'DELETE']);
+}
+
+}

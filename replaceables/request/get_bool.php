@@ -1,7 +1,13 @@
 <?php
 
-return function($name, $default = null) {
-  $value = request_param($name);
+namespace amateur
+{
+
+use amateur\core\amateur;
+
+function get_bool($name, $default = null)
+{
+  $value = amateur::request_param($name);
   if (!isset($value)) {
     return $default;
   }
@@ -14,4 +20,6 @@ return function($name, $default = null) {
   else {
     return (bool)$value;
   }
-};
+}
+
+}

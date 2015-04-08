@@ -1,5 +1,13 @@
 <?php
 
-return function() {
-  return \amateur\core\amateur::instance();
-};
+namespace amateur
+{
+
+use amateur\core\amateur;
+
+function amateur()
+{
+  return amateur::instance();
+}
+
+}

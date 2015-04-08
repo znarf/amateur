@@ -1,6 +1,14 @@
 <?php
 
-return function($name, $args = [], $layout = 'default') {
-  layout($layout, view($name, $args));
-  finish();
-};
+namespace amateur
+{
+
+use amateur\core\amateur;
+
+function render($name, $args = [], $layout = 'default')
+{
+  amateur::layout($layout, amateur::view($name, $args));
+  amateur::finish();
+}
+
+}

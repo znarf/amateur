@@ -1,6 +1,12 @@
 <?php
 
-return function($name, $args = []) {
+namespace amateur
+{
+
+use amateur\core\amateur;
+
+function layout($name, $args = [])
+{
   # Registry
   static $layouts = [];
   # Transition
@@ -13,7 +19,7 @@ return function($name, $args = []) {
   }
   # If no content is defined, use current response_content
   if (empty($args['content'])) {
-    $args['content'] = response_content();
+    $args['content'] = amateur::response_content();
   }
   # Start output buffering
   ob_start();
@@ -23,8 +29,10 @@ return function($name, $args = []) {
   }
   # Use default Layout
   else {
-    default_layout($name, $args);
+    amateur::default_layout($name, $args);
   }
   # Set content from output buffer
-  return response_content(ob_get_clean());
-};
+  return amateur::response_content(ob_get_clean());
+}
+
+}

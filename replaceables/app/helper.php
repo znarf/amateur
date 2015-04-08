@@ -1,11 +1,17 @@
 <?php
 
-return function($name, $helper = null) {
+namespace amateur
+{
+
+use amateur\core\amateur;
+
+function helper($name, $helper = null)
+{
   # Registry
   static $helpers = [];
   # Multi
   if ($name === (array)$name) {
-    return array_map('helper', $name);
+    return array_map('\amateur\helper', $name);
   }
   # Set helper (closure or object expected)
   if ($helper && is_object($helper)) {
@@ -17,7 +23,7 @@ return function($name, $helper = null) {
   }
   # Load
   else {
-    $helper = default_helper($name);
+    $helper = amateur::default_helper($name);
     # If an object or a closure is returned
     if ($helper && is_object($helper)) {
       $helpers[$name] = $helper;
@@ -33,4 +39,6 @@ return function($name, $helper = null) {
   }
   # Return
   return $helper;
-};
+}
+
+}

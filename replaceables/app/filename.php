@@ -1,7 +1,13 @@
 <?php
 
-return function($type, $name) {
-  $base_dir = app_dir();
+namespace amateur
+{
+
+use amateur\core\amateur;
+
+function filename($type, $name)
+{
+  $base_dir = amateur::app_dir();
   $filenames = [
     "{$base_dir}/{$name}.{$type}.php",
     "{$base_dir}/{$type}s/{$name}.{$type}.php",
@@ -12,4 +18,6 @@ return function($type, $name) {
       return $filename;
     }
   }
-};
+}
+
+}

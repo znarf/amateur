@@ -1,6 +1,10 @@
 <?php
 
-return function($name = null, $value = null) {
+namespace amateur
+{
+
+function response_header($name = null, $value = null)
+{
   static $headers = [];
   if ($name) {
     if ($value) {
@@ -11,4 +15,6 @@ return function($name = null, $value = null) {
     }
   }
   return $headers;
-};
+}
+
+}

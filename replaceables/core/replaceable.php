@@ -1,10 +1,18 @@
 <?php
 
-return function($name, $replaceable = null) {
+namespace amateur
+{
+
+use amateur\core\replaceable;
+
+function replaceable($name, $replaceable = null)
+{
   # Set
   if ($replaceable) {
-    return \amateur\core\replaceable::set($name, $replaceable);
+    return replaceable::set($name, $replaceable);
   }
   # Get
-  return \amateur\core\replaceable::get($name);
-};
+  return replaceable::get($name);
+}
+
+}

@@ -1,5 +1,13 @@
 <?php
 
-return function() {
-  return new \amateur\magic\anonymous_class;
-};
+namespace amateur
+{
+
+use amateur\magic\anonymous_class;
+
+function anonymous_class()
+{
+  return new anonymous_class;
+}
+
+}

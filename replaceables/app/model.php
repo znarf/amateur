@@ -1,14 +1,22 @@
 <?php
 
-return function($name) {
+namespace amateur
+{
+
+use amateur\core\amateur;
+
+function model($name)
+{
   # Multi
   if ($name === (array)$name) {
-    return array_map('model', $name);
+    return array_map('\amateur\model', $name);
   }
   # Default
   $instance = function() use ($name) {
-    return default_model($name);
+    return amateur::default_model($name);
   };
   # Registry
-  return registry('model', $name, $instance);
-};
+  return amateur::registry('model', $name, $instance);
+}
+
+}

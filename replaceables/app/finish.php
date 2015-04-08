@@ -1,13 +1,19 @@
 <?php
 
-return function() {
-  if ($code = response_code()) {
+namespace amateur
+{
+
+use amateur\core\amateur;
+
+function finish()
+{
+  if ($code = amateur::response_code()) {
     http_response_code($code);
   }
-  foreach (response_header() as $name => $value) {
+  foreach (amateur::response_header() as $name => $value) {
     header("$name:$value");
   }
-  if ($content = response_content()) {
+  if ($content = amateur::response_content()) {
     echo $content;
   }
   if (function_exists('fastcgi_finish_request')) {
@@ -17,4 +23,6 @@ return function() {
     flush();
   }
   exit;
-};
+}
+
+}

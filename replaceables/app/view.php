@@ -1,18 +1,26 @@
 <?php
 
-return function($name, $args = []) {
+namespace amateur
+{
+
+use amateur\core\amateur;
+
+function view($name, $args = [])
+{
   # Registry
   static $views = [];
   # Store View (not an array and callable)
   if ($args !== (array)$args && is_callable($args)) {
     return $views[$name] = $args;
   }
-  # Stored View
+  # Stored View (callable)
   if (isset($views[$name])) {
     ob_start();
     $views[$name]($args);
-    return response_content(ob_get_clean());
+    return amateur::response_content(ob_get_clean());
   }
   # Default view
-  return default_view($name, $args);
-};
+  return amateur::default_view($name, $args);
+}
+
+}

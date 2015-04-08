@@ -1,6 +1,12 @@
 <?php
 
-return function($name, $callable = null) {
+namespace amateur
+{
+
+use amateur\core\amateur;
+
+function action($name, $callable = null)
+{
   # Registry
   static $actions = [];
   # Store Action (not null and callable)
@@ -9,7 +15,7 @@ return function($name, $callable = null) {
   }
   # Default Action
   if (empty($actions[$name])) {
-    $action = $actions[$name] = default_action($name);
+    $action = $actions[$name] = amateur::default_action($name);
   }
   # Stored Action
   else {
@@ -19,4 +25,6 @@ return function($name, $callable = null) {
   if (is_callable($action)) {
     $action();
   }
-};
+}
+
+}

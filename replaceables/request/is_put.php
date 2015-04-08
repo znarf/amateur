@@ -1,5 +1,13 @@
 <?php
 
-return function() {
-  return request_method() == 'PUT';
-};
+namespace amateur
+{
+
+use amateur\core\amateur;
+
+function is_put()
+{
+  return amateur::request_method() == 'PUT';
+}
+
+}

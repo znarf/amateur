@@ -1,13 +1,21 @@
 <?php
 
-return function($value = null)
+namespace amateur
+{
+
+use amateur\core\amateur;
+
+function request_url($value = null)
 {
   static $url;
   if (isset($value)) {
     return $url = $value;
   }
   elseif (!isset($url)) {
-    $url = str_replace(app_path(), '', strtok($_SERVER['REQUEST_URI'], '?'));
+    $request_uri = strtok($_SERVER['REQUEST_URI'], '?');
+    $url = str_replace(amateur::app_path(), '', $request_uri);
   }
   return $url;
-};
+}
+
+}

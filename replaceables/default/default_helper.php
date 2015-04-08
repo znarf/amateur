@@ -1,8 +1,17 @@
 <?php
 
-return function($name) {
-  if ($filename = filename('helper', $name)) {
+namespace amateur
+{
+
+use amateur\core\amateur;
+use amateur\core\exception;
+
+function default_helper($name)
+{
+  if ($filename = amateur::filename('helper', $name)) {
     return include $filename;
   }
-  throw http_error(500, "Unknown helper ($name).");
-};
+  throw new exception("Unknown view ($name).", 500);
+}
+
+}

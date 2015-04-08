@@ -1,5 +1,11 @@
 <?php
 
-return function() {
+namespace amateur
+{
+
+function request_protocol()
+{
   return 'http';
-};
+}
+
+}
