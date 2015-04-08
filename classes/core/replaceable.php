@@ -5,6 +5,8 @@ class replaceable
 
   static $replaceables = [];
 
+  static $expose_global_functions = false;
+
   static function instance()
   {
     return registry::instance('core', 'replaceable', __class__);
@@ -41,11 +43,8 @@ class replaceable
 
   static function set($name, $replaceable)
   {
-    # No replaceable with this name exists
-    if (empty(self::$replaceables[$name])) {
-      if (!function_exists($name)) {
-        eval('function ' . $name . '() { return ' . __class__ . '::call("' . $name . '", func_get_args()); }');
-      }
+    if (self::$expose_global_functions) {
+      self::create_global_function($name);
     }
     return self::$replaceables[$name] = $replaceable;
   }
@@ -57,6 +56,21 @@ class replaceable
       throw new exception("Unknown replaceable ($name).", 500);
     }
     return $callable(...$args);
+  }
+
+  public function create_global_function($name)
+  {
+    if (!function_exists($name)) {
+      eval('function ' . $name . '() { return ' . __class__ . '::call("' . $name . '", func_get_args()); }');
+    }
+  }
+
+  public function expose_global_functions()
+  {
+    self::$expose_global_functions = true;
+    foreach (self::$replaceables as $name => $replaceable) {
+      self::create_global_function($name);
+    }
   }
 
 }
