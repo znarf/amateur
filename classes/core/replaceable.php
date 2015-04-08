@@ -50,23 +50,13 @@ class replaceable
     return self::$replaceables[$name] = $replaceable;
   }
 
-  static function call($name, $args, $callable = null)
+  static function call($name, $args)
   {
-    if (isset(self::$replaceables[$name])) {
-      $callable = self::$replaceables[$name];
-    }
-    elseif (!$callable) {
+    $callable = replaceable::get($name);
+    if (!$callable) {
       throw new exception("Unknown replaceable ($name).", 500);
     }
-    if (!$args) {
-      return is_callable($callable) ? $callable() : $callable;
-    }
-    switch (count($args)) {
-      case 1: return $callable($args[0]);
-      case 2: return $callable($args[0], $args[1]);
-      case 3: return $callable($args[0], $args[1], $args[2]);
-    }
-    return call_user_func_array($callable, $args);
+    return $callable(...$args);
   }
 
 }

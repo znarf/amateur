@@ -10,12 +10,20 @@ class amateur
 
   static function __callStatic($name, $args)
   {
-    return replaceable::call($name, $args);
+    $callable = replaceable::get($name);
+    if (!$callable) {
+      throw new exception("Unknown replaceable ($name).", 500);
+    }
+    return $callable(...$args);
   }
 
   function __call($name, $args)
   {
-    return replaceable::call($name, $args);
+    $callable = replaceable::get($name);
+    if (!$callable) {
+      throw new exception("Unknown replaceable ($name).", 500);
+    }
+    return $callable(...$args);
   }
 
   function __set($name, $value)

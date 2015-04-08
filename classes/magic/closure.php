@@ -21,15 +21,7 @@ class closure
     $args = empty($this->args) ? func_get_args() : $this->args;
     $object = $this->object;
     $method = $this->method;
-    if (!$args) {
-      return $object->$method();
-    }
-    switch (count($args)) {
-      case 1:  return $object->$method($args[0]);
-      case 2:  return $object->$method($args[0], $args[1]);
-      case 3:  return $object->$method($args[0], $args[1], $args[2]);
-      default: return call_user_func_array([$object, $method], $args);
-    }
+    return $object->$method(...$args);
   }
 
   function __use()
