@@ -7,12 +7,7 @@ class replaceable
 
   static $expose_global_functions = false;
 
-  static function instance()
-  {
-    return registry::instance('core', 'replaceable', __class__);
-  }
-
-  public function load($dir, $namespace = null)
+  static function load($dir, $namespace = null)
   {
     foreach (new \DirectoryIterator($dir) as $file) {
       if ($file->isDir() && !$file->isDot()) {
@@ -58,14 +53,14 @@ class replaceable
     return $callable(...$args);
   }
 
-  public function create_global_function($name)
+  static function create_global_function($name)
   {
     if (!function_exists($name)) {
       eval('function ' . $name . '() { return ' . __class__ . '::call("' . $name . '", func_get_args()); }');
     }
   }
 
-  public function expose_global_functions()
+  static function expose_global_functions()
   {
     self::$expose_global_functions = true;
     foreach (self::$replaceables as $name => $replaceable) {
