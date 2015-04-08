@@ -11,7 +11,7 @@ function helper($name, $helper = null)
   static $helpers = [];
   # Multi
   if ($name === (array)$name) {
-    return array_map('\amateur\helper', $name);
+    return array_map(__function__, $name);
   }
   # Set helper (closure or object expected)
   if ($helper && is_object($helper)) {

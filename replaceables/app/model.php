@@ -9,7 +9,7 @@ function model($name)
 {
   # Multi
   if ($name === (array)$name) {
-    return array_map('\amateur\model', $name);
+    return array_map(__function__, $name);
   }
   # Default
   $instance = function() use ($name) {
