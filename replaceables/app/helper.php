@@ -1,9 +1,4 @@
-<?php
-
-namespace amateur
-{
-
-use amateur\core\amateur;
+<?php namespace amateur;
 
 function helper($name, $helper = null)
 {
@@ -39,6 +34,4 @@ function helper($name, $helper = null)
   }
   # Return
   return $helper;
-}
-
 }

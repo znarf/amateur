@@ -1,13 +1,6 @@
-<?php
-
-namespace amateur
-{
-
-use amateur\core\exception;
+<?php namespace amateur;
 
 function http_error($code, $message)
 {
   return new exception($message, $code);
-}
-
 }

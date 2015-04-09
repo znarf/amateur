@@ -1,9 +1,4 @@
-<?php
-
-namespace amateur
-{
-
-use amateur\core\amateur;
+<?php namespace amateur;
 
 function get_parameters($names)
 {
@@ -12,6 +7,4 @@ function get_parameters($names)
     $parameters[$name] = amateur::request_param($name);
   }
   return $parameters;
-}
-
 }

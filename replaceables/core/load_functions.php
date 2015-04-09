@@ -1,9 +1,4 @@
-<?php
-
-/* deprecated */
-
-namespace amateur
-{
+<?php namespace amateur;
 
 function load_functions($dir)
 {
@@ -12,6 +7,4 @@ function load_functions($dir)
       require_once $file->getPathName();
     }
   }
-}
-
 }

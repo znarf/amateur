@@ -1,9 +1,4 @@
-<?php
-
-namespace amateur
-{
-
-use amateur\core\replaceable;
+<?php namespace amateur;
 
 function replaceable($name, $replaceable = null)
 {
@@ -13,6 +8,4 @@ function replaceable($name, $replaceable = null)
   }
   # Get
   return replaceable::get($name);
-}
-
 }

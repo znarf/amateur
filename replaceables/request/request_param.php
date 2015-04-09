@@ -1,7 +1,4 @@
-<?php
-
-namespace amateur
-{
+<?php namespace amateur;
 
 function request_param($name, $value = null)
 {
@@ -11,6 +8,4 @@ function request_param($name, $value = null)
   elseif (isset($_REQUEST[$name])) {
     return $_REQUEST[$name];
   }
-}
-
 }

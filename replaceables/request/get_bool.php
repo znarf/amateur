@@ -1,9 +1,4 @@
-<?php
-
-namespace amateur
-{
-
-use amateur\core\amateur;
+<?php namespace amateur;
 
 function get_bool($name, $default = null)
 {
@@ -20,6 +15,4 @@ function get_bool($name, $default = null)
   else {
     return (bool)$value;
   }
-}
-
 }

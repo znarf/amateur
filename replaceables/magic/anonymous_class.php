@@ -1,13 +1,6 @@
-<?php
-
-namespace amateur
-{
-
-use amateur\magic\anonymous_class;
+<?php namespace amateur;
 
 function anonymous_class()
 {
-  return new anonymous_class;
-}
-
+  return new \amateur\magic\anonymous_class;
 }

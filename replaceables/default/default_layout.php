@@ -1,9 +1,4 @@
-<?php
-
-namespace amateur
-{
-
-use amateur\core\amateur;
+<?php namespace amateur;
 
 function default_layout($name, $args = [])
 {
@@ -20,6 +15,4 @@ function default_layout($name, $args = [])
   else {
    return amateur::layout('default', $args);
   }
-}
-
 }

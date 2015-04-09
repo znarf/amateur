@@ -1,9 +1,4 @@
-<?php
-
-namespace amateur
-{
-
-use amateur\core\amateur;
+<?php namespace amateur;
 
 function check_method($methods)
 {
@@ -13,4 +8,3 @@ function check_method($methods)
   }
 }
 
-}

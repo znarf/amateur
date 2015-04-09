@@ -1,9 +1,4 @@
-<?php
-
-namespace amateur
-{
-
-use amateur\core\amateur;
+<?php namespace amateur;
 
 function check_parameters($names)
 {
@@ -15,6 +10,4 @@ function check_parameters($names)
     }
   }
   return $parameters;
-}
-
 }

@@ -1,9 +1,4 @@
-<?php
-
-namespace amateur
-{
-
-use amateur\core\amateur;
+<?php namespace amateur;
 
 function filename($type, $name)
 {
@@ -18,6 +13,4 @@ function filename($type, $name)
       return $filename;
     }
   }
-}
-
 }

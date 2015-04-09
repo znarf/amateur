@@ -1,13 +1,6 @@
-<?php
-
-namespace amateur
-{
-
-use amateur\core\amateur;
+<?php namespace amateur;
 
 function is_delete()
 {
   return amateur::request_method() == 'DELETE';
-}
-
 }

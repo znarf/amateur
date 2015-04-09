@@ -1,9 +1,4 @@
-<?php
-
-namespace amateur
-{
-
-use amateur\core\amateur;
+<?php namespace amateur;
 
 function request_url($value = null)
 {
@@ -16,6 +11,4 @@ function request_url($value = null)
     $url = str_replace(amateur::app_path(), '', $request_uri);
   }
   return $url;
-}
-
 }

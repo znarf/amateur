@@ -1,4 +1,4 @@
-<?php namespace amateur\core;
+<?php namespace amateur;
 
 class replaceable
 {

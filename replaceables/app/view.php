@@ -1,9 +1,4 @@
-<?php
-
-namespace amateur
-{
-
-use amateur\core\amateur;
+<?php namespace amateur;
 
 function view($name, $args = [])
 {
@@ -21,6 +16,4 @@ function view($name, $args = [])
   }
   # Default view
   return amateur::default_view($name, $args);
-}
-
 }

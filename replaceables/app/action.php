@@ -1,9 +1,4 @@
-<?php
-
-namespace amateur
-{
-
-use amateur\core\amateur;
+<?php namespace amateur;
 
 function action($name, $callable = null)
 {
@@ -25,6 +20,4 @@ function action($name, $callable = null)
   if (is_callable($action)) {
     $action();
   }
-}
-
 }

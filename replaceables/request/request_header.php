@@ -1,7 +1,4 @@
-<?php
-
-namespace amateur
-{
+<?php namespace amateur;
 
 function request_header($name)
 {
@@ -13,6 +10,4 @@ function request_header($name)
     $key = 'HTTP_' . str_replace('-', '_', strtoupper($name));
     return $headers[$name] = isset($_SERVER[$key]) ? $_SERVER[$key] : null;
   }
-}
-
 }

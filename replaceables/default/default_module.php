@@ -1,10 +1,4 @@
-<?php
-
-namespace amateur
-{
-
-use amateur\core\amateur;
-use amateur\core\exception;
+<?php namespace amateur;
 
 function default_module($name)
 {
@@ -13,6 +7,3 @@ function default_module($name)
   }
   throw new exception("Unknown module ($name).", 500);
 }
-
-}
-

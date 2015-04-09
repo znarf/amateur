@@ -327,7 +327,7 @@ class table
 
   static function flush()
   {
-    foreach (\amateur\core\registry::instances('table') as $instance) $instance->objects = [];
+    foreach (\amateur\registry::instances('table') as $instance) $instance->objects = [];
   }
 
 }

@@ -1,13 +1,6 @@
-<?php
-
-namespace amateur
-{
-
-use amateur\core\registry;
+<?php namespace amateur;
 
 function registry($type, $name, $instance = null)
 {
   return registry::instance($type, $name, $instance);
-}
-
 }

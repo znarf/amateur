@@ -1,9 +1,4 @@
-<?php
-
-namespace amateur
-{
-
-use amateur\core\amateur;
+<?php namespace amateur;
 
 function layout($name, $args = [])
 {
@@ -33,6 +28,4 @@ function layout($name, $args = [])
   }
   # Set content from output buffer
   return amateur::response_content(ob_get_clean());
-}
-
 }

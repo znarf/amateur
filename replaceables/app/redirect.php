@@ -1,9 +1,4 @@
-<?php
-
-namespace amateur
-{
-
-use amateur\core\amateur;
+<?php namespace amateur;
 
 function redirect($path, $permanent = false)
 {
@@ -11,6 +6,4 @@ function redirect($path, $permanent = false)
   amateur::response_code($permanent ? 301 : 302);
   amateur::response_header('Location', $url);
   amateur::finish();
-}
-
 }

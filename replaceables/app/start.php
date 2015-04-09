@@ -1,9 +1,4 @@
-<?php
-
-namespace amateur
-{
-
-use amateur\core\amateur;
+<?php namespace amateur;
 
 function start($callable = null)
 {
@@ -23,6 +18,4 @@ function start($callable = null)
     ob_end_clean();
     amateur::error(500, $e->getMessage(), $e->getTraceAsString());
   }
-}
-
 }

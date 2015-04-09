@@ -1,9 +1,4 @@
-<?php
-
-namespace amateur
-{
-
-use amateur\core\amateur;
+<?php namespace amateur;
 
 function module($name, $callable = null)
 {
@@ -25,6 +20,4 @@ function module($name, $callable = null)
     $modules[$name] = $module;
     return $module();
   }
-}
-
 }

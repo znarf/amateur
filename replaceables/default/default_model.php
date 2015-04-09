@@ -1,10 +1,4 @@
-<?php
-
-namespace amateur
-{
-
-use amateur\core\amateur;
-use amateur\core\exception;
+<?php namespace amateur;
 
 function default_model($name)
 {
@@ -12,6 +6,4 @@ function default_model($name)
     return include $filename;
   }
   throw new exception("Unknown model ($name).", 500);
-}
-
 }

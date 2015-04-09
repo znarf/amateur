@@ -1,13 +1,6 @@
-<?php
-
-namespace amateur
-{
-
-use amateur\core\amateur;
+<?php namespace amateur;
 
 function amateur()
 {
-  return amateur::instance();
-}
-
+  return amateur::registry('core', 'amateur', '\amateur\core\amateur');
 }

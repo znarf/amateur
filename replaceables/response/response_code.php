@@ -1,7 +1,4 @@
-<?php
-
-namespace amateur
-{
+<?php namespace amateur;
 
 function response_code($value = null)
 {
@@ -10,6 +7,4 @@ function response_code($value = null)
     $code = $value;
   }
   return $code;
-}
-
 }

@@ -1,10 +1,4 @@
-<?php
-
-namespace amateur
-{
-
-use amateur\core\amateur;
-use amateur\core\exception;
+<?php namespace amateur;
 
 function default_view($name, $args = [])
 {
@@ -15,6 +9,4 @@ function default_view($name, $args = [])
     return amateur::response_content(ob_get_clean());
   }
   throw new exception("Unknown view ($name).", 500);
-}
-
 }

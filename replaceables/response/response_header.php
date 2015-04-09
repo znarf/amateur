@@ -1,7 +1,4 @@
-<?php
-
-namespace amateur
-{
+<?php namespace amateur;
 
 function response_header($name = null, $value = null)
 {
@@ -17,4 +14,3 @@ function response_header($name = null, $value = null)
   return $headers;
 }
 
-}

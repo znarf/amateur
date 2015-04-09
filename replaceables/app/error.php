@@ -1,11 +1,4 @@
-<?php
-
-namespace amateur
-{
-
-use exception;
-
-use amateur\core\amateur;
+<?php namespace amateur;
 
 function error($code = 500, $message = 'Application Error', $trace = '')
 {
@@ -14,7 +7,7 @@ function error($code = 500, $message = 'Application Error', $trace = '')
     try {
       if ($content = amateur::view($view, compact('code', 'message', 'trace'))) break;
     }
-    catch (exception $e) {
+    catch (\exception $e) {
     }
   }
   if (empty($content)) {
@@ -22,6 +15,4 @@ function error($code = 500, $message = 'Application Error', $trace = '')
   }
   amateur::layout('error', $content);
   amateur::finish();
-}
-
 }

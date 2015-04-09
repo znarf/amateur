@@ -1,9 +1,4 @@
-<?php
-
-namespace amateur
-{
-
-use amateur\core\amateur;
+<?php namespace amateur;
 
 function model($name)
 {
@@ -17,6 +12,4 @@ function model($name)
   };
   # Registry
   return amateur::registry('model', $name, $instance);
-}
-
 }

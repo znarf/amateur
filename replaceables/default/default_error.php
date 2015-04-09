@@ -1,7 +1,4 @@
-<?php
-
-namespace amateur
-{
+<?php namespace amateur;
 
 function default_error($code = 500, $message = 'Application Error', $trace = '')
 {
@@ -10,6 +7,4 @@ function default_error($code = 500, $message = 'Application Error', $trace = '')
     $content .= "<pre>{$trace}</pre>";
   }
   return $content;
-}
-
 }
