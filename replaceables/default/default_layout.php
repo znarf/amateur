@@ -11,7 +11,7 @@ function default_layout($name, $args = [])
   elseif ($name == 'none' || $name == 'default') {
     return amateur::response_content($args['content']);
   }
-  # Forward to Default
+  # Not Found, forward to default/none
   else {
    return amateur::layout('default', $args);
   }

@@ -2,35 +2,30 @@
 
 function helper($name, $helper = null)
 {
-  # Registry
-  static $helpers = [];
+  # Init Registry
+  if (!isset(amateur::$registry['helpers'])) {
+    amateur::$registry['helpers'] = [];
+  }
   # Multi
   if ($name === (array)$name) {
     return array_map(__function__, $name);
   }
-  # Set helper (closure or object expected)
+  # Store Helper (object or closure)
   if ($helper && is_object($helper)) {
-    return $helpers[$name] = $helper;
+    return amateur::$registry['helpers'][$name] = $helper;
   }
-  # Loaded (even if it's null)
-  if (isset($helpers[$name]) || array_key_exists($name, $helpers)) {
-    $helper = $helpers[$name];
+  # Loaded (even if it's null, to load only once)
+  if (isset(amateur::$registry['helpers'][$name]) || array_key_exists($name, amateur::$registry['helpers'])) {
+    $helper = amateur::$registry['helpers'][$name];
   }
   # Load
   else {
-    $helper = amateur::default_helper($name);
-    # If an object or a closure is returned
-    if ($helper && is_object($helper)) {
-      $helpers[$name] = $helper;
-    }
-    # Or if it has been registered in the $helpers array (even if it's null)
-    elseif (isset($helpers[$name]) || array_key_exists($name, $helpers)) {
-      $helper = $helpers[$name];
-    }
+    $default_helper = amateur::replaceable('default_helper');
+    $helper = amateur::$registry['helpers'][$name] = $default_helper($name);
   }
-  # Execute closure (lazy loading)
-  if ($helper && $helper instanceof closure) {
-    $helper = $helpers[$name] = $helper();
+  # If it's a closure, execute and store
+  if ($helper && $helper instanceof \closure) {
+    $helper = amateur::$registry['helpers'][$name] = $helper();
   }
   # Return
   return $helper;

@@ -2,6 +2,7 @@
 
 function render($name, $args = [], $layout = 'default')
 {
-  amateur::layout($layout, amateur::view($name, $args));
+  amateur::view($name, $args);
+  amateur::layout($layout);
   amateur::finish();
 }

@@ -1,23 +1,32 @@
 <?php namespace amateur;
 
-function action($name, $callable = null)
+function action($name, $args = [])
 {
-  # Registry
-  static $actions = [];
-  # Store Action (not null and callable)
-  if (isset($callable) && is_callable($callable)) {
-    return $actions[$name] = $callable;
+  # Init Registry
+  if (!isset(amateur::$registry['actions'])) {
+    amateur::$registry['actions'] = [];
   }
-  # Default Action
-  if (empty($actions[$name])) {
-    $action = $actions[$name] = amateur::default_action($name);
+  # Store Action (callable)
+  if (!empty($args) && is_callable($args)) {
+    return amateur::$registry['actions'][$name] = $args;
   }
   # Stored Action
+  if (isset(amateur::$registry['actions'][$name])) {
+    $action = amateur::$registry['actions'][$name];
+    $result = $action($args);
+  }
+  # Default Action
   else {
-    $action = $actions[$name];
+    $default_action = amateur::replaceable('default_action');
+    $result = $default_action($name, $args);
   }
-  # Execute Action
-  if (is_callable($action)) {
-    $action();
+  # If a callable is returned
+  if (is_callable($result)) {
+    # Store It
+    $action = amateur::$registry['actions'][$name] = $result;
+    # Execute it immediately
+    $result = $action($args);
   }
+  # Return result
+  return $result;
 }

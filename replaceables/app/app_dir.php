@@ -2,6 +2,11 @@
 
 function app_dir($value = null)
 {
-  static $app_dir = './';
-  return isset($value) ? $app_dir = realpath($value) : $app_dir;
+  if (!isset(amateur::$registry['app_dir'])) {
+    amateur::$registry['app_dir'] = './';
+  }
+  if ($value) {
+    amateur::$registry['app_dir'] = realpath($value);
+  }
+  return amateur::$registry['app_dir'];
 }

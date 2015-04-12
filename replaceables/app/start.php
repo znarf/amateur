@@ -2,15 +2,17 @@
 
 function start($callable = null)
 {
+  # Load Replaceable
+  $action = amateur::replaceable('action');
   # Store
   if ($callable) {
-    amateur::action('start', $callable);
+    $action('start', $callable);
   }
   # Execute and catch exceptions
   try {
-    amateur::action('start');
+    $action('start');
   }
-  catch (\amateur\core\exception $e) {
+  catch (\amateur\exception $e) {
     ob_end_clean();
     amateur::error($e->getCode(), $e->getMessage(), $e->getTraceAsString());
   }

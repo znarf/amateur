@@ -2,9 +2,10 @@
 
 function response_content($value = null)
 {
-  static $content;
   if ($value) {
-    $content = $value;
+    amateur::$registry['response_content'] = $value;
   }
-  return $content;
+  if (isset(amateur::$registry['response_content'])) {
+    return amateur::$registry['response_content'];
+  }
 }

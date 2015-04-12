@@ -2,9 +2,10 @@
 
 function response_code($value = null)
 {
-  static $code;
   if ($value) {
-    $code = $value;
+    amateur::$registry['response_code'] = $value;
   }
-  return $code;
+  if (isset(amateur::$registry['response_code'])) {
+    return amateur::$registry['response_code'];
+  }
 }

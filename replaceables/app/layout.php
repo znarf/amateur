@@ -2,29 +2,32 @@
 
 function layout($name, $args = [])
 {
-  # Registry
-  static $layouts = [];
-  # Transition
+  # Init Registry
+  if (!isset(amateur::$registry['layouts'])) {
+    amateur::$registry['layouts'] = [];
+  }
+  # Store Layout
+  if (!empty($args) && is_callable($args)) {
+    return amateur::$registry['layouts'][$name] = $args;
+  }
+  # If string is passed as argument, use it as content
   if (is_string($args)) {
     $args = ['content' => $args];
   }
-  # Store Layout (not an array and callable)
-  if ($args !== (array)$args && is_callable($args)) {
-    return $layouts[$name] = $args;
-  }
-  # If no content is defined, use current response_content
+  # If no content is passed as argument, use current response_content
   if (empty($args['content'])) {
     $args['content'] = amateur::response_content();
   }
   # Start output buffering
   ob_start();
-  # Use stored Layout
-  if (isset($layouts[$name])) {
-    $layouts[$name]($args);
+  # Stored Layout (callable)
+  if (isset(amateur::$registry['layouts'][$name])) {
+    amateur::$registry['layouts'][$name]($args);
   }
-  # Use default Layout
+  # Default Layout
   else {
-    amateur::default_layout($name, $args);
+    $default_layout = amateur::replaceable('default_layout');
+    $default_layout($name, $args);
   }
   # Set content from output buffer
   return amateur::response_content(ob_get_clean());

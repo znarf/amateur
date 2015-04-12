@@ -2,18 +2,21 @@
 
 function view($name, $args = [])
 {
-  # Registry
-  static $views = [];
-  # Store View (not an array and callable)
-  if ($args !== (array)$args && is_callable($args)) {
-    return $views[$name] = $args;
+  # Init Registry
+  if (!isset(amateur::$registry['views'])) {
+    amateur::$registry['views'] = [];
+  }
+  # Store View
+  if (!empty($args) && is_callable($args)) {
+    return amateur::$registry['views'][$name] = $args;
   }
   # Stored View (callable)
-  if (isset($views[$name])) {
+  if (isset(amateur::$registry['views'][$name])) {
     ob_start();
-    $views[$name]($args);
+    amateur::$registry['views'][$name]($args);
     return amateur::response_content(ob_get_clean());
   }
   # Default view
-  return amateur::default_view($name, $args);
+  $default_view = amateur::replaceable('default_view');
+  return $default_view($name, $args);
 }

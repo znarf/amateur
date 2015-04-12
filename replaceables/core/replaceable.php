@@ -2,10 +2,5 @@
 
 function replaceable($name, $replaceable = null)
 {
-  # Set
-  if ($replaceable) {
-    return replaceable::set($name, $replaceable);
-  }
-  # Get
-  return replaceable::get($name);
+  return $replaceable ? replaceable::set($name, $replaceable) : replaceable::get($name);
 }

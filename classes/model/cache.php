@@ -85,7 +85,7 @@ class cache
     self::$cache[$key] = $value;
     # Register storage
     if (!self::$store_registered) {
-      register_shutdown_function(['\amateur\model\cache', 'store']);
+      register_shutdown_function([__class__, 'store']);
       self::$store_registered = true;
     }
   }

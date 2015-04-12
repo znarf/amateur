@@ -2,13 +2,12 @@
 
 function request_url($value = null)
 {
-  static $url;
   if (isset($value)) {
-    return $url = $value;
+    return amateur::$registry['request_url'] = $value;
   }
-  elseif (!isset($url)) {
+  if (!isset(amateur::$registry['request_url'])) {
     $request_uri = strtok($_SERVER['REQUEST_URI'], '?');
-    $url = str_replace(amateur::app_path(), '', $request_uri);
+    amateur::$registry['request_url'] = str_replace(amateur::app_path(), '', $request_uri);
   }
-  return $url;
+  return amateur::$registry['request_url'];
 }

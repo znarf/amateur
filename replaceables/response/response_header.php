@@ -2,15 +2,18 @@
 
 function response_header($name = null, $value = null)
 {
-  static $headers = [];
   if ($name) {
     if ($value) {
-      $headers[$name] = $value;
+      amateur::$registry['response_headers'][$name] = $value;
     }
     else {
-      unset($headers[$name]);
+      unset($registry['response_headers'][$name]);
     }
   }
-  return $headers;
+  if (isset(amateur::$registry['response_headers'])) {
+    return amateur::$registry['response_headers'];
+  }
+  else {
+    return [];
+  }
 }
-

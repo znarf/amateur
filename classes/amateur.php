@@ -3,44 +3,30 @@
 class amateur
 {
 
-  static function instance()
-  {
-    return registry::instance('core', 'amateur', __class__);
-  }
+  use magic\single_instance;
+
+  static $registry = [];
 
   static function __callStatic($name, $args)
   {
-    $callable = replaceable::get($name);
-    if (!$callable) {
-      throw new exception("Unknown replaceable ($name).", 500);
+    if (isset(replaceable::$replaceables[$name])) {
+      $callable = replaceable::$replaceables[$name];
+    }
+    else {
+      $callable = replaceable::get($name, $throw_exception = true);
     }
     return $callable(...$args);
   }
 
   function __call($name, $args)
   {
-    $callable = replaceable::get($name);
-    if (!$callable) {
-      throw new exception("Unknown replaceable ($name).", 500);
-    }
-    return $callable(...$args);
-  }
-
-  function __set($name, $value)
-  {
-    if ($value instanceof \closure) {
-      return replaceable::set($name, $value);
+    if (isset(replaceable::$replaceables[$name])) {
+      $callable = replaceable::$replaceables[$name];
     }
     else {
-      $this->$name = $value;
+      $callable = replaceable::get($name, $throw_exception = true);
     }
-  }
-
-  function __get($name)
-  {
-    if ($value = replaceable::get($name)) {
-      return $value;
-    }
+    return $callable(...$args);
   }
 
 }

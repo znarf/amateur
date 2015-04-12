@@ -2,5 +2,5 @@
 
 function amateur()
 {
-  return amateur::registry('core', 'amateur', '\amateur\core\amateur');
+  return amateur::single_instance();
 }
