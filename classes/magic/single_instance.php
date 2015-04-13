@@ -3,9 +3,9 @@
 trait single_instance
 {
 
-  static function single_instance()
+  static function instance()
   {
-    return \amateur\registry::instance('instance', __class__, __class__);
+    return \amateur\registry::instance(__class__);
   }
 
 }

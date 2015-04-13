@@ -323,11 +323,4 @@ class table
     return $this->to_objects($rows);
   }
 
-  # Static
-
-  static function flush()
-  {
-    foreach (\amateur\registry::instances('table') as $instance) $instance->objects = [];
-  }
-
 }

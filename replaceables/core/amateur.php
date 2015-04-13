@@ -2,5 +2,5 @@
 
 function amateur()
 {
-  return amateur::single_instance();
+  return amateur::instance();
 }

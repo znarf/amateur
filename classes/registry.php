@@ -5,28 +5,18 @@ class registry
 
   static $instances = [];
 
-  static function instance($type, $name, $instance = null)
+  static function instance($classname)
   {
-    if (isset(self::$instances[$type][$name])) {
-      return self::$instances[$type][$name];
+    # Already Registered
+    if (isset(self::$instances[$classname])) {
+      return self::$instances[$classname];
     }
-    elseif (is_object($instance)) {
-      if ($instance instanceof \closure) {
-        $instance = $instance();
-      }
-      return self::$instances[$type][$name] = $instance;
+    # Instanciate
+    if (class_exists($classname)) {
+      return self::$instances[$classname] = new $classname;
     }
-    elseif (class_exists($instance)) {
-      return self::$instances[$type][$name] = new $instance;
-    }
-    else {
-       throw new exception("Unknown instance ({$type}/{$name}).");
-     }
-  }
-
-  static function instances($type)
-  {
-    return isset(self::$instances[$type]) ? self::$instances[$type] : [];
+    # Unknown
+    throw new exception("Unknown class ($classname).");
   }
 
 }
