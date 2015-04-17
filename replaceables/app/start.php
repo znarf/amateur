@@ -1,5 +1,7 @@
 <?php namespace amateur;
 
+/* deprecated */
+
 function start($callable = null)
 {
   # Load Replaceable
