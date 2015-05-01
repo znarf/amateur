@@ -17,7 +17,7 @@ function module($name, $callable = null)
   }
   # Execute Module ...
   # ... or return a callable to be stored and executed
-  $default_module = amateur::replaceable('default_module');
+  $default_module = replaceable::get('default_module', true);
   $result = $default_module($name);
   if (is_callable($result)) {
     $module = amateur::$registry['modules'][$name] = $result;

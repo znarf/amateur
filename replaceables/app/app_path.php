@@ -6,7 +6,7 @@ function app_path($value = null)
     amateur::$registry['app_path'] = '';
   }
   if ($value) {
-    amateur::$registry['app_path'] = realpath($value);
+    amateur::$registry['app_path'] = $value;
   }
   return amateur::$registry['app_path'];
 }

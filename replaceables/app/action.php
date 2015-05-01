@@ -17,7 +17,7 @@ function action($name, $args = [])
   }
   # Default Action
   else {
-    $default_action = amateur::replaceable('default_action');
+    $default_action = replaceable::get('default_action', true);
     $result = $default_action($name, $args);
   }
   # If a callable is returned

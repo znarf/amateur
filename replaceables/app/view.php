@@ -17,6 +17,6 @@ function view($name, $args = [])
     return amateur::response_content(ob_get_clean());
   }
   # Default view
-  $default_view = amateur::replaceable('default_view');
+  $default_view = replaceable::get('default_view', true);
   return $default_view($name, $args);
 }

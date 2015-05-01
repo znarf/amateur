@@ -20,7 +20,7 @@ function helper($name, $helper = null)
   }
   # Load
   else {
-    $default_helper = amateur::replaceable('default_helper');
+    $default_helper = replaceable::get('default_helper', true);
     $helper = amateur::$registry['helpers'][$name] = $default_helper($name);
   }
   # If it's a closure, execute and store

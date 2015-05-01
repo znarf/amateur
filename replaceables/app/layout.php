@@ -26,7 +26,7 @@ function layout($name, $args = [])
   }
   # Default Layout
   else {
-    $default_layout = amateur::replaceable('default_layout');
+    $default_layout = replaceable::get('default_layout', true);
     $default_layout($name, $args);
   }
   # Set content from output buffer

@@ -10,7 +10,7 @@ function run($callable = null)
     }
     # Default with start action
     else {
-      $action = amateur::replaceable('action');
+      $action = replaceable::get('action', true);
       $action('start');
     }
   }

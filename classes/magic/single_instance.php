@@ -5,7 +5,7 @@ trait single_instance
 
   static function instance()
   {
-    return \amateur\registry::instance(__class__);
+    return \amateur\amateur::instance(__class__);
   }
 
 }
