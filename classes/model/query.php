@@ -72,6 +72,12 @@ class query
     return $this;
   }
 
+  function and_from($tablename)
+  {
+    $this->tablename = $this->build_args($this->tablename) . ', ' . $this->build_args($tablename);
+    return $this;
+  }
+
   function set($set)
   {
     # sqlite doesn't support the set syntax for inserts
