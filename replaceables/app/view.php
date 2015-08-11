@@ -13,7 +13,8 @@ function view($name, $args = [])
   # Stored View (callable)
   if (isset(amateur::$registry['views'][$name])) {
     ob_start();
-    amateur::$registry['views'][$name]($args);
+    $view = amateur::$registry['views'][$name];
+    $view($args);
     return amateur::response_content(ob_get_clean());
   }
   # Default view
