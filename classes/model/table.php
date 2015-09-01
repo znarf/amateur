@@ -3,8 +3,6 @@
 class table
 {
 
-  public $namespace;
-
   public $classname;
 
   public $tablename;
@@ -20,8 +18,6 @@ class table
   public $default_limit = 1000;
 
   public $default_ttl = 0;
-
-  public $objects = [];
 
   function __construct($tablename = null)
   {
@@ -58,8 +54,8 @@ class table
   function get_one($key, $value)
   {
     # From local
-    if (isset($this->objects[$key][$value])) {
-      return $this->objects[$key][$value];
+    if (isset(runtime::$objects[$this->tablename][$key][$value])) {
+      return runtime::$objects[$this->tablename][$key][$value];
     }
     # From Cache
     $use_cache = in_array($key, $this->unique_indexes);
@@ -67,20 +63,16 @@ class table
       $cache_key = $this->cache_key($key, $value);
       $row = cache::get($cache_key);
       if (is_array($row)) {
-        return $this->objects[$key][$value] = $this->to_object($row);
-      }
-      elseif ($row === 0) {
-        return null;
+        return runtime::$objects[$this->tablename][$key][$value] = $this->to_object($row);
       }
     }
     # From DB
     $row = $this->fetch_one([$key => $value]);
-    if ($use_cache) {
-      $ttl = $row ? $this->default_ttl : 60;
-      cache::set($cache_key, $row ?: 0, $ttl);
+    if ($row && $use_cache) {
+      cache::set($cache_key, $row, $this->default_ttl);
     }
     if ($row) {
-      return $this->objects[$key][$value] = $this->to_object($row);
+      return runtime::$objects[$this->tablename][$key][$value] = $this->to_object($row);
     }
   }
 
@@ -95,10 +87,7 @@ class table
         # For now, we assume preloading
         $row = cache::get($this->cache_key($key, $value), true);
         if (is_array($row)) {
-          $objects[$value] = $this->objects[$key][$value] = $this->to_object($row);
-          unset($values[$i]);
-        }
-        elseif ($row === 0) {
+          $objects[$value] = runtime::$objects[$this->tablename][$key][$value] = $this->to_object($row);
           unset($values[$i]);
         }
       }
@@ -110,11 +99,10 @@ class table
         $rows = $this->fetch_all([$key => $values_chunk]);
         foreach ($rows as $row) {
           $value = $row[$key];
-          if ($use_cache) {
-            $ttl = $row ? $this->default_ttl : 60;
-            cache::set($this->cache_key($key, $value), $row ?: 0, $ttl);
+          if ($row && $use_cache) {
+            cache::set($this->cache_key($key, $value), $row, $this->default_ttl);
           }
-          $objects[$value] = $this->objects[$key][$value] = $this->to_object($row);
+          $objects[$value] = runtime::$objects[$this->tablename][$key][$value] = $this->to_object($row);
         }
       }
     }
@@ -234,8 +222,10 @@ class table
     # Update Cache
     foreach ($rows as $row) {
       foreach ($this->unique_indexes as $key) {
-        $cache_key = $this->cache_key($key, $row[$key]);
+        $value = $row[$key];
+        $cache_key = $this->cache_key($key, $value);
         cache::set($cache_key, $row, $this->default_ttl);
+        unset(runtime::$objects[$this->tablename][$key][$value]);
       }
     }
     # Return object
