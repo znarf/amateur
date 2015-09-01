@@ -84,7 +84,7 @@ class replaceable
     }
   }
 
-  static function expose_global_functions()
+  static function expose_replaceables()
   {
     self::$expose_global_functions = true;
     $names = array_merge(array_keys(self::$replaceables), array_keys(self::$index));
