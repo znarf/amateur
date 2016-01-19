@@ -215,6 +215,10 @@ class table
       $resource = $where;
       $where = array_intersect_key($resource->attributes, array_flip($this->primaries()));
     }
+    # Sanity check
+    if (!$where) {
+      throw new exception("Where can't be empty.");
+    }
     # Update Db
     $this->query()->update()->where($where)->set($set)->execute();
     # Get from Db
