@@ -11,7 +11,9 @@ class cache
 
   static $set = [];
 
-  static $store_registered;
+  static $delayed_storage = false;
+
+  static $delayed_storage_registered = false;
 
   static function params($params = null)
   {
@@ -83,10 +85,14 @@ class cache
   {
     self::$set[$key] = [$value, $expire];
     self::$cache[$key] = $value;
-    # Register storage
-    if (!self::$store_registered) {
+    # Direct storage
+    if (!self::$delayed_storage) {
+      self::store();
+    }
+    # Register delayed storage
+    elseif (!self::$delayed_storage_registered) {
       register_shutdown_function([__class__, 'store']);
-      self::$store_registered = true;
+      self::$delayed_storage_registered = true;
     }
   }
 
