@@ -190,10 +190,9 @@ class table
   {
     $this->insert()->set($set)->execute();
     # Compute condition to read back from Db
-    $primary = $this->primary();
     $insert_id = db::insert_id();
-    if ($primary && $insert_id) {
-      $where = [$primary => $insert_id];
+    if ($this->primary && $insert_id) {
+      $where = [$this->primary => $insert_id];
     }
     else {
       $where = array_intersect_key($set, array_flip($this->primaries()));
