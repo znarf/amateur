@@ -118,7 +118,7 @@ class request
     }
 
     $time_start = microtime(true);
-    error_log("Request:$method:$url start");
+    // error_log("Request:$method:$url start");
 
     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
     curl_setopt($ch, CURLOPT_URL, $url);
@@ -132,7 +132,7 @@ class request
 
     $time_end = microtime(true);
     $time = round($time_end - $time_start, 3);
-    error_log("Request:$method:$url completed in $time");
+    // error_log("Request:$method:$url completed in $time");
 
     return new response($code, $body);
   }
