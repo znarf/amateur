@@ -35,6 +35,20 @@ class request
     return $this->execute();
   }
 
+  function get_json($url, $params = null)
+  {
+    $this->method = 'GET';
+    $this->url = $url;
+    if (isset($params)) {
+      $this->params = $params;
+    }
+    $this->headers[] = 'Content-Type:application/json';
+    $response = $this->execute();
+    if ($response && $response->body) {
+      return json_decode($response->body, true);
+    }
+  }
+
   function post_json($url, $params = null)
   {
     $this->method = 'POST';
